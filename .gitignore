@@ -1,0 +1,5 @@
+.DS_Store
+*.psd
+*.config
+*.code-workspace
+*.css.map

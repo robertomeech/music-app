@@ -1,0 +1,52 @@
+
+Rotten Tomatoes
+https://www.programmableweb.com/api/rotten-tomatoes
+
+Youtube Data api?
+
+
+
+Open Music
+
+TicketMaster  -- Events nearby from that artist or related artists
+
+Music api  Musikki
+
+MusixMatch
+https://www.programmableweb.com/news/musixmatch-api-could-be-music-to-developer-ears/2011/02/02
+
+http://api.musixmatch.com/ws/1.1/track.search?apikey=MY_API_KEY&q_artist=queen&q_track=we%20are%20the%20champions&format=json&page_size=1&f_has_lyrics=1
+
+https://www.programmableweb.com/news/best-new-mashups-find-lyrics-instantly/2011/01/24
+
+
+
+Reviews --
+
+Reviews of the venue -- Yelp API?
+
+
+
+Use a news api to search for news on the musical group to create a timeline.
+	--Have options for date range, etc.
+
+
+--The internet archive
+	--Old versions of band website
+
+--Celeb Info API
+	-More info about band
+
+
+--  Giphy -- for gifs of celeb
+		--Gifs
+
+-- iTunes music search
+-- Apple Music
+-- Google music
+
+
+--=
+
+
+Combining Location, Genre, and Ticketmaster

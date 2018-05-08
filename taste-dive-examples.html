@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="styles/style.css">
+  <title>Taste Dive</title>
+</head>
+
+<body>
+<script src='https://code.jquery.com/jquery-3.2.1.min.js' integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='crossorigin='anonymous'></script>
+  <script>
+// API DOCUMENTATION  => https://tastedive.com/read/api
+//     PARAMETERS
+// q: the search query; consists of a series (at least one) of bands, movies, TV shows, books, authors and/or games, separated by commas. Sometimes it is useful to specify the type of a certain resource in the query (e.g. if a movie and a book share the same title). You can do this by using the "band:", "movie:", "show:", "book:", "author:" or "game:" operators, for example: "band:underworld, movie:harry potter, book:trainspotting". Don't forget to encode this parameter.
+// type: query type, specifies the desired type of results. It can be one of the following: music, movies, shows, books, authors, games. If not specified, the results can have mixed types.
+// info: when set to 1, additional information is provided for the recommended items, like a description and a related Youtube clip (when available). Default is 0.
+// limit: maximum number of recommendations to retrieve. Default is 20.
+// k: Your API access key.
+// callback: add when using JSONP, to specify the callback function.
+// When verbose=1 in the request, each item can also contains the following additional keys:
+
+// wTeaser: item description
+// wUrl: item Wikipedia URL
+// yUrl: item Youtube clip URL
+// yID: item Youtube clip ID
+
+  const app = {};
+    //Note signed in through Avi's gmail https://tastedive.com/account/api_access
+    app.apiKey = "307717-BandInfo-9TZENPKF";
+    app.apiURL = "https://tastedive.com/api/similar";
+
+  app.getRelated = function (search) {
+      $.ajax({
+        type: "GET",
+        data: {
+            k: app.apiKey,
+            q: search,
+            type: "music",
+            info: 1,
+            // format:"jsonp",
+            // format:"jsonp"
+            // callback:"jsonp_callback"
+        },
+        url: app.apiURL,
+        dataType: "jsonp",
+        // jsonpCallback: 'jsonp_callback',
+        // contentType: 'application/json'
+      })
+        .then(function (res) {
+          console.log( "dataRetreived", res);
+
+        });
+    }
+
+    //Document ready
+    $(function () {
+      app.getRelated('Beyonce');
+    });
+
+  </script>
+</body>
+
+</html>
