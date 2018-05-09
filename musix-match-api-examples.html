@@ -14,7 +14,21 @@
 
 <script src='https://code.jquery.com/jquery-3.2.1.min.js' integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='crossorigin='anonymous'></script>
 <script>
-  const app = {};
+  const app.paramObj = {
+    searchMethod = app.apiMethod.artist,
+    artistName: "",
+    genre: ,
+    time: {start: , end: },
+
+  }
+
+  data {
+    q_artist: (paramObj.artistName) ? paramObj.artistName : "" ; 
+  }
+
+  getLyrics(artistName, genre, time)
+
+app.
 
   // app.apiURL = "http://api.musixmatch.com/ws/1.1/track.search";
 
@@ -24,9 +38,8 @@ app.apiURL =  "http://api.musixmatch.com/ws/1.1/";
 
 app.apiMethods = ["track.search", "artist.related.get", "track.lyrics.get" ]
 
-app.fullURL = "http://api.musixmatch.com/ws/1.1/track.search?apikey=0a6e3214ba4afecba8f9ee47cbca8d33";
-
 app.apiKey = "0a6e3214ba4afecba8f9ee47cbca8d33";
+
 
 
   app.getTracks = function (artistSearch) {
