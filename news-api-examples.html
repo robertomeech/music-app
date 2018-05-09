@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="styles/style.css">
+  <title>Taste Dive</title>
+</head>
+
+<body>
+<script src='https://code.jquery.com/jquery-3.2.1.min.js' integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='crossorigin='anonymous'></script>
+  <script>
+
+
+  const app = {};
+    //Note signed in through Avi's gmail https://tastedive.com/account/api_access
+    app.apiKey = "fa3e8d25020f408a9cc8b28515b74047";
+    app.apiURL = "https://newsapi.org/v2/everything";
+
+    //Example:
+    var url = 'https://newsapi.org/v2/everything?' +
+          'q=Apple&' +
+          'from=2018-05-08&' +
+          'sortBy=popularity&' +
+          'apiKey=fa3e8d25020f408a9cc8b28515b74047';
+
+
+  app.getNews = function (search) {
+      $.ajax({
+        type: "GET",
+        data: {
+            apiKey: app.apiKey,
+            q: search,
+            from: "2017-01-01",
+            sortBy: 'popularity'
+        },
+        url: app.apiURL,
+        dataType: "json",
+      })
+        .then(function (res) {
+          console.log( "dataRetreived", res);
+
+        });
+    }
+
+    //Document ready
+    $(function () {
+      app.getNews('Beyonce');
+    });
+
+  </script>
+</body>
+
+</html>

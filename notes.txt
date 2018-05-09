@@ -1,3 +1,26 @@
+Goals stated in Scope Outline
+
+Allow use to search for info about a musical artist.
+
+Include:
+  --News about the artist, related artists, song lyrics, albums,
+
+Strech goal: add local live upcoming  events.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Rotten Tomatoes
 https://www.programmableweb.com/api/rotten-tomatoes
