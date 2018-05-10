@@ -23,11 +23,11 @@ app.addGenreOptions = function () {
             .attr('value', genre)
             .attr('data-genre-id', genreId)
             .text(genre);
-
         $('#genre').append($option);
-
     }
 }
+
+//Make background image change with change event in select element for different genres
 
 //EVENT FUNCTIONS
 
@@ -189,19 +189,15 @@ app.makeObjectFromArrays = function (keys, values) {
 //Note this function is not used at run time, but we needed to write it to extract the genre-name and genre-id pairings from the track data so that we could use these for the genre-search API request
 app.getGenres = function (tracksData) {
     const trackList = tracksData.message.body.track_list;
-
-    console.log(`tracklist: `, trackList);
     const genreArray = [];
     let genreId = [];
     let genreName = [];
     trackList.forEach( (elTrack) => {
         const genreList = elTrack.track.primary_genres.music_genre_list;
-
         if (genreList.length > 0) {
             genreId.push( genreList[0].music_genre.music_genre_id );
             genreName.push( genreList[0].music_genre.music_genre_name );
         }
-
     }); //End of forEach
     let genreIdUnique = (new Set(genreId));
     genreIdUnique = Array.from(genreIdUnique);
