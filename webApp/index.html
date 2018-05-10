@@ -5,18 +5,23 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  
+
   <link rel="stylesheet" href="styles/style.css">
-  <title>title</title>
+  <title>Music Lyrics Game</title>
 </head>
 
 <body>
+
+    <!-- We should have two forms. One for artist and one for genre. This makes it obvious that you can only choose one or the other.  -->
   <form action="" class="game-options">
-    <label for="artist">Artist Name</label>
-    <input type="text" id="artist">
+    <!-- <label for="artist">Artist Name</label>
+    <input type="text" id="artist"> -->
     <label for="genre">Genre</label>
-    <input type="text"  id="genre" value="Chart hits">
-    <input type="submit">
+    <select name="genre" id="genre">
+      <option value="">Choose genre</option>
+      <option value="chart">Top 100</option>
+    </select>
+    <input type="submit" value="Get">
   </form>
   <script src="scripts/lodash.js"></script>
   <script src='https://code.jquery.com/jquery-3.2.1.min.js' integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='crossorigin='anonymous'></script>

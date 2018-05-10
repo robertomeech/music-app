@@ -1,54 +1,96 @@
+//GLOBAL VARIABLES
 app = {};
+//  $
+//  _
 
-// Form Event
-// --Takes values from form submit and translates them into a parameter object for use with API queries
 
+//PAGE BUILDING FUNCTIONS
+app.genres = {
+    "Hip Hop/Rap": 18,
+    "Country": 6,
+    "Alternative": 20,
+    "Dance": 17,
+    "Pop": 14,
+    "Heavy Metal": 1153,
+    "R&B/Soul": 15,
+    "Rock": 21
+  }
+
+app.addGenreOptions = function () {
+    for (genre in app.genres) {
+        const genreId = app.genres[genre];
+        const $option = $('<option>')
+            .attr('value', genre)
+            .attr('data-genre-id', genreId)
+            .text(genre);
+        $('#genre').append($option);
+    }
+}
+
+//Make background image change with change event in select element for different genres
+
+//EVENT FUNCTIONS
+
+
+// Takes values from form submit returns them in an object organized according to the type of search.
 app.getFormSubmit = function (event) {
     const form = event.target;
-    
+
     const artistSearch = $('#artist').val();
     const genreSearch = $('#genre').val();
-    
-    
+
+
     return { //Using ES6 object literal syntax, instead of  {varName: varName}  => {varName}
         artistSearch,
         genreSearch
     }
-
-    // console.log('form submit',$(event.target).serializeArray());
-    //  console.log('event.target', event.target);
-    //  console.log(`$this`, $(this));
 }
 
 app.makeOptionsObject = function (formValues) {
 
+
+
 }
 
 // --Genre, decade, artist
-//     => Choose Genre or Artist, and optionally decade.If you don’t choose a decade you get recent hits. 
-// 		=> With default is the top40 chart. 
+//     => Choose Genre or Artist, and optionally decade.If you don’t choose a decade you get recent hits.
+// 		=> With default is the top40 chart.
 // 	--Also ask how long they want to play for, and how many players
 // --If there is more than one player, they can put in the player names
 
 // API Requests
 
 
-app.methods = {
+app.musixMethods = {
+    //Use this to get top chart hits
     chart: 'chart.tracks.get',
-    lyrics: 'track.lyrics.get',
-    track: 'track.search'
-}  
 
-const chartConfig = {
-    method: app.methods.chart,
-    lyrics: true,
-    numOfResults: 100
+    //Use this for genre and artist searchs
+    track: 'track.search',
+
+    //Use this to get related artists from the artist id.
+    related: 'artist.related.get',
+
+    //Use this to get the lyrics after searching for the track IDs
+    lyrics: 'track.lyrics.get'
 }
+
+
+//Test config objects
+const chartConfig = {
+    method: app.musixMethods.chart,
+};
 
 const lyricConfig = {
-    method: app.methods.lyrics,
-    trackId: 149804156
-}
+    method: app.musixMethods.lyrics,
+    trackId: 149804156,
+    f_has_lyrics: true //Test to see if this messes up the search
+};
+
+const trackConfig =  {
+    method: app.musixMethods.track,
+    genreId: 14 //pop
+};
 
 //Musix API Info
 app.musixUrl = "https://api.musixmatch.com/ws/1.1/";
@@ -73,24 +115,37 @@ app.musixRequest = function(options) { //Options is an object with the config fo
             format: 'jsonp',
             callback: 'jsonp_callback',
 
+            //YYYYMMDD
+            //Only songs newere than this date
+            f_track_release_group_first_release_date_min: '20170101',
+
+            //Only songs older than this date
+            // f_track_release_group_first_release_date_max: ,
+
             //Chart search
-            f_has_lyrics: (options.lyrics) ? options.lyrics : '',
+            f_has_lyrics: true, //Did a test and this seems to be  safe to set to true for all searches
+            page_size: 100,
             page_size: (options.numOfResults) ? options.numOfResults : '',
 
-            //Lyrics Search
-            track_id: (options.trackId) ? options.trackId : '',
-
             //Track Search
-            f_music_genre_id: (options.genreId) ? options.genreId : ''
+            f_music_genre_id: (options.genreId) ? options.genreId : '',
+            f_lyrics_language: 'en',
+            q_artist: (options.artist) ? options.artist : '',
+            //sort by track popularity
+            // s_track_rating: true,
+            //sort by artist popularity
+            s_artist_rating: true,
 
+            //Lyrics Search
+            track_id: (options.trackId) ? options.trackId : ''
         }
     })
-    .then(function(result){ 
-        console.log(`Musix API Result: 
+    .then(function(result){
+        console.log(`Musix API Result:
         ` , result);
-        
+
         return result;
-        
+
         // console.log("dataRetreived", result.message.body.lyrics.lyrics_body);
 
     });
@@ -122,35 +177,27 @@ app.giphyRequest = function(artistSearch){  //parameter is relative to the funct
 
 //Data Manipulate Functions
 
-app.makeMapFromArrays = function (keys, values) {
-
-    const newMap = new Map();
-
+//A utility function used with the getGenre's function
+app.makeObjectFromArrays = function (keys, values) {
+    const newObject = {};
     for (let i = 0; i < keys.length; i++) {
-
-        newMap.set(keys[i], values[i]);
-
+        newObject[keys[i]] =  values[i];
     }
-
-    return newMap;
+    return newObject;
 }
 
-
+//Note this function is not used at run time, but we needed to write it to extract the genre-name and genre-id pairings from the track data so that we could use these for the genre-search API request
 app.getGenres = function (tracksData) {
     const trackList = tracksData.message.body.track_list;
-    
-    console.log(`tracklist: `, trackList);
     const genreArray = [];
     let genreId = [];
     let genreName = [];
     trackList.forEach( (elTrack) => {
         const genreList = elTrack.track.primary_genres.music_genre_list;
-            
         if (genreList.length > 0) {
             genreId.push( genreList[0].music_genre.music_genre_id );
-            genreName.push( genreList[0].music_genre.music_genre_name ); 
+            genreName.push( genreList[0].music_genre.music_genre_name );
         }
-        
     }); //End of forEach
     let genreIdUnique = (new Set(genreId));
     genreIdUnique = Array.from(genreIdUnique);
@@ -158,19 +205,8 @@ app.getGenres = function (tracksData) {
     let genreNameUnique = (new Set(genreName));
     genreNameUnique = Array.from(genreNameUnique);
 
-    const genreMap = app.makeMapFromArrays(genreNameUnique, genreIdUnique);
-
-
-    console.log(`ids and names`, genreMap);
-   
-    
-    // console.log(genreArray);
-
-    // —forEach
-    // element.track.primary_genres.music_genre_list[0].music_genre.music_genre_id
-
-
-    // element.track.primary_genres.music_genre_list[0].music_genre.music_genre_id.primary_genres.music_genre_list[0].music_genre.music_genre_name
+    const genreMap = app.makeObjectFromArrays(genreNameUnique, genreIdUnique);
+    // console.log(`ids and names`, genreMap);
 }
 
 
@@ -191,19 +227,21 @@ app.getGenres = function (tracksData) {
 // --Accept user feedback through click or touch
 // --Display feedback based on whether they were correct
 // --Adjust the score for that player
-// 	--Track players with an array of player object.Properties includes score and player name(Stretch goal: have player avatars). 
+// 	--Track players with an array of player object.Properties includes score and player name(Stretch goal: have player avatars).
 
+//Document Ready Function
 $(function(){
-    const musicPromise = app.musixRequest(chartConfig)
-        .then( function (result){
+   app.addGenreOptions();
 
-            app.getGenres(result);
+    const musicPromise = app.musixRequest(trackConfig)
+        .then( function (result){
+            console.log(result);
+            // app.getGenres(result);
         });
     // app.musixRequest(lyricConfig);
     // app.giphyRequest('Eminem');
 
     // console.log(`promise`, musicPromise);
-
 
     //Form event handler
     $('.game-options').on("submit", function (event) {

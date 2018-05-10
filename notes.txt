@@ -1,3 +1,6 @@
+
+
+
 Goals stated in Scope Outline
 
 Allow use to search for info about a musical artist.
