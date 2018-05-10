@@ -102,11 +102,11 @@ app.giphyUrl = "http://api.giphy.com/v1/gifs/search";
 app.giphyApiKey = "gUH1fFCntMG4MW94vqf6UCSWIqCusok1";
 
 
-
-app.musixRequest = function(options) { //Options is an object with the config for the request.
+//Chart Request
+app.musixRequest = function() { //Options is an object with the config for the request.
     const musixResults = $.ajax({
         type: 'GET',
-        url: app.musixUrl + options.method, // OPTIONS MUST INCLUDE METHOD
+        url: app.musixUrl + app.musixMethods.chart, 
         dataType: "jsonp",
         jsonpCallback: 'jsonp_callback',
         contentType: 'application/json',
@@ -115,34 +115,34 @@ app.musixRequest = function(options) { //Options is an object with the config fo
             format: 'jsonp',
             callback: 'jsonp_callback',
 
-            //YYYYMMDD
-            //Only songs newere than this date
-            f_track_release_group_first_release_date_min: '20170101',
-
-            //Only songs older than this date
-            // f_track_release_group_first_release_date_max: ,
 
             //Chart search
-            f_has_lyrics: true, //Did a test and this seems to be  safe to set to true for all searches
+            f_has_lyrics: 1, 
             page_size: 100,
-            page_size: (options.numOfResults) ? options.numOfResults : '',
-
-            //Track Search
-            f_music_genre_id: (options.genreId) ? options.genreId : '',
-            f_lyrics_language: 'en',
-            q_artist: (options.artist) ? options.artist : '',
-            //sort by track popularity
-            // s_track_rating: true,
-            //sort by artist popularity
-            s_artist_rating: true,
-
-            //Lyrics Search
-            track_id: (options.trackId) ? options.trackId : ''
+            //174 results 
         }
     })
     .then(function(result){
         console.log(`Musix API Result:
         ` , result);
+
+
+        const tracksInfo = result.message.body.track_list.map(track => {
+        const { track_id, artist_name, album_name, track_name } =  track.track;
+
+        const genreList = track.track.primary_genres.music_genre_list;
+        let genre_name = "";
+         if (genreList.length > 0) {
+            genre_name = genreList[0].music_genre.music_genre_name;
+         }
+        
+            return {track_id, artist_name, album_name, track_name, genre_name};
+        })
+        console.log(tracksInfo);
+        
+        const filtered = app.filterByGenre(tracksInfo, 'Hip Hop/Rap');
+        console.log(`filtered`, filtered);
+        
 
         return result;
 
@@ -151,6 +151,58 @@ app.musixRequest = function(options) { //Options is an object with the config fo
     });
 
     return musixResults;
+}
+
+// Sort Genre Name
+app.filterByGenre = function(tracksInfo, genreName) {
+    const filteredTracks = tracksInfo.filter(track => {
+        return genreName === track.genre_name;
+    });
+    
+    return filteredTracks; 
+}
+
+//LYRICS SEARCH
+app.lyricsRequest = function(trackId){
+    const lyricsUnedited = $.ajax({
+        type: 'GET',
+        url: app.musixUrl + app.musixMethods.lyrics, // OPTIONS MUST INCLUDE METHOD
+        dataType: "jsonp",
+        jsonpCallback: 'jsonp_callback',
+        contentType: 'application/json',
+        data: {
+            apikey: app.musixApiKey,
+            format: 'jsonp',
+            callback: 'jsonp_callback',
+
+
+
+            track_id: trackId,
+            page_size: 100
+            // page: 2,
+
+
+            // IF WE DO ARTIST SEARCH
+
+            //Track Search
+            // f_lyrics_language: 'en',
+            // q_artist: (options.artist) ? options.artist : '',
+            //sort by track popularity
+            // s_track_rating: true,
+        }
+    })
+        .then(function (lyrics) {
+            console.log(`Musix API lyrics:
+        ` , lyrics.message.body.lyrics.lyrics_body);
+
+            return lyrics.message.body.lyrics.lyrics_body;
+
+            // console.log("dataRetreived", result.message.body.lyrics.lyrics_body);
+
+        });
+
+        return lyricsUnedited;
+        
 }
 
 
@@ -233,9 +285,8 @@ app.getGenres = function (tracksData) {
 $(function(){
    app.addGenreOptions();
 
-    const musicPromise = app.musixRequest(trackConfig)
+    const musicPromise = app.musixRequest()
         .then( function (result){
-            console.log(result);
             // app.getGenres(result);
         });
     // app.musixRequest(lyricConfig);
@@ -252,3 +303,5 @@ $(function(){
 
 
 });
+
+
