@@ -6,15 +6,26 @@ app = {};
 
 //PAGE BUILDING FUNCTIONS
 app.genres = {
-    "Hip Hop/Rap": 18,
-    "Country": 6,
-    "Alternative": 20,
-    "Dance": 17,
     "Pop": 14,
-    "Heavy Metal": 1153,
-    "R&B/Soul": 15,
-    "Rock": 21
+    "Hip Hop/Rap": 18,
+    "Alternative": 20,
+    "Country": 6
+    // "Dance": 17,
+    // "Heavy Metal": 1153,
+    // "R&B/Soul": 15,
+    // "Rock": 21
   }
+  //RESULTS OF SORTING TOP 100 BY GENRE
+  // Length of Pop is 18
+  // Length of Hip Hop/Rap is 10
+  // Length of Alternative is 8
+  // Length of Country is 20
+  //NOT ENOUGH OF THESE
+  // Length of Dance is 3
+  // Length of Heavy Metal is 1
+  // Length of R&B/Soul is 3
+  // Length of Rock is 1
+
 
 app.addGenreOptions = function () {
     for (genre in app.genres) {
@@ -29,32 +40,7 @@ app.addGenreOptions = function () {
 
 //Make background image change with change event in select element for different genres
 
-//EVENT FUNCTIONS
 
-
-// Takes values from form submit returns them in an object organized according to the type of search.
-app.getFormSubmit = function (event) {
-    const form = event.target;
-
-    const artistSearch = $('#artist').val();
-    const genreSearch = $('#genre').val();
-
-
-    return { //Using ES6 object literal syntax, instead of  {varName: varName}  => {varName}
-        artistSearch,
-        genreSearch
-    }
-}
-
-app.makeOptionsObject = function (formValues) {
-
-
-
-}
-
-// --Genre, decade, artist
-//     => Choose Genre or Artist, and optionally decade.If you don’t choose a decade you get recent hits.
-// 		=> With default is the top40 chart.
 // 	--Also ask how long they want to play for, and how many players
 // --If there is more than one player, they can put in the player names
 
@@ -106,7 +92,7 @@ app.giphyApiKey = "gUH1fFCntMG4MW94vqf6UCSWIqCusok1";
 app.musixRequest = function() { //Options is an object with the config for the request.
     const musixResults = $.ajax({
         type: 'GET',
-        url: app.musixUrl + app.musixMethods.chart, 
+        url: app.musixUrl + app.musixMethods.chart,
         dataType: "jsonp",
         jsonpCallback: 'jsonp_callback',
         contentType: 'application/json',
@@ -115,17 +101,15 @@ app.musixRequest = function() { //Options is an object with the config for the r
             format: 'jsonp',
             callback: 'jsonp_callback',
 
-
             //Chart search
-            f_has_lyrics: 1, 
+            f_has_lyrics: 1,
             page_size: 100,
-            //174 results 
+            //174 results
         }
     })
     .then(function(result){
         console.log(`Musix API Result:
         ` , result);
-
 
         const tracksInfo = result.message.body.track_list.map(track => {
         const { track_id, artist_name, album_name, track_name } =  track.track;
@@ -135,19 +119,26 @@ app.musixRequest = function() { //Options is an object with the config for the r
          if (genreList.length > 0) {
             genre_name = genreList[0].music_genre.music_genre_name;
          }
-        
+
             return {track_id, artist_name, album_name, track_name, genre_name};
         })
-        console.log(tracksInfo);
-        
-        const filtered = app.filterByGenre(tracksInfo, 'Hip Hop/Rap');
-        console.log(`filtered`, filtered);
-        
 
-        return result;
+        //Create an object to store the genres and add the top 100 chart hits info
+        const genreSortedTracks = {
+          "Top 100": tracksInfo
+         };
+
+        //Loop through genres to create genre properties with filtered array
+        for (genre in app.genres) {
+          genreSortedTracks[genre] =  app.filterByGenre(tracksInfo, genre) ;
+        }
+
+        //Add R&B tracks to hip hop
+        genreSortedTracks["Hip Hop/Rap"] =  genreSortedTracks["Hip Hop/Rap"].concat(app.filterByGenre(tracksInfo, 'R&B/Soul'));
+        console.log(genreSortedTracks);
+        return genreSortedTracks;
 
         // console.log("dataRetreived", result.message.body.lyrics.lyrics_body);
-
     });
 
     return musixResults;
@@ -158,13 +149,12 @@ app.filterByGenre = function(tracksInfo, genreName) {
     const filteredTracks = tracksInfo.filter(track => {
         return genreName === track.genre_name;
     });
-    
-    return filteredTracks; 
+    return filteredTracks;
 }
 
 //LYRICS SEARCH
 app.lyricsRequest = function(trackId){
-    const lyricsUnedited = $.ajax({
+    const lyrics = $.ajax({
         type: 'GET',
         url: app.musixUrl + app.musixMethods.lyrics, // OPTIONS MUST INCLUDE METHOD
         dataType: "jsonp",
@@ -174,8 +164,6 @@ app.lyricsRequest = function(trackId){
             apikey: app.musixApiKey,
             format: 'jsonp',
             callback: 'jsonp_callback',
-
-
 
             track_id: trackId,
             page_size: 100
@@ -192,19 +180,33 @@ app.lyricsRequest = function(trackId){
         }
     })
         .then(function (lyrics) {
-            console.log(`Musix API lyrics:
-        ` , lyrics.message.body.lyrics.lyrics_body);
+        //     console.log(`Musix API lyrics:
+        // ` , lyrics.message.body.lyrics.lyrics_body);
 
-            return lyrics.message.body.lyrics.lyrics_body;
+            const lyricsUnedited = lyrics.message.body.lyrics.lyrics_body;
+            // console.log(`un-edited lyrics inside API request:
 
-            // console.log("dataRetreived", result.message.body.lyrics.lyrics_body);
+            // `,  lyricsUnedited);
+
+            const lyricsEdited = app.trimLyrics(lyricsUnedited);
+            // console.log(`edited lyrics inside API request:
+
+            // `,  lyricsEdited);
+            return lyricsEdited;
+
 
         });
 
-        return lyricsUnedited;
-        
+        return lyrics;
+
 }
 
+app.trimLyrics = function (rawLyrics) {
+  let lyricsEdited =  rawLyrics.split('...')[0];
+
+
+  return lyricsEdited;
+}
 
 //Giphy
 app.giphyRequest = function(artistSearch){  //parameter is relative to the function
@@ -225,9 +227,89 @@ app.giphyRequest = function(artistSearch){  //parameter is relative to the funct
     })
 }
 
+app.getLyrics = function (tracksPromise, genre) {
+  return tracksPromise.then( (genreSortedTracks) => {
 
+    //Select the list of tracks for just the chosen genre
+    let tracksList = genreSortedTracks[genre];
+
+    //Randomize tracks list
+    tracksList = app.randomizeArray(tracksList);
+    console.log(`randomized tracksList`,tracksList )
+
+    //Slice the tracks list to no more than 10 tracks
+    //3 for now to not waste api requests
+    tracksList = tracksList.slice(0,6);
+    console.log(`sliced tracksList`,tracksList )
+    let lyricsPromises = [];
+    tracksList.forEach(track => {
+
+      const lyricsPromise = app.lyricsRequest(track.track_id)
+        .then(lyric => {
+          console.log(lyric);
+          let stanzas = lyric.split('\n\n');
+
+          //Remove the first stanza
+          stanzas.shift();
+
+          //filter stanzas with less than 4 lines
+          stanzas = stanzas.filter(stanza => stanza.split('\n').length >= 4)
+
+          //randomize stanzas
+          stanzas = app.randomizeArray(stanzas);
+
+          let lines = stanzas[0].split('\n');
+
+          const randomOffset = app.randomRange(0, lines.length-4);
+
+          //select 4 random lines from the stanza
+          let lyricSelection =  lines.slice(randomOffset, randomOffset + 4);
+          lyricSelection =  lyricSelection.join('\n');
+
+          // //Get two lines per sub array e.g.,  [[line1, line2  ], [line3, line4  ], etc   ]
+          // lines =  _.chunk(lines, 2);
+
+          // //Filter our single line arrays
+          // lines = lines.filter(twoLines => twoLines.length === 2);
+
+          // //Randomize two line chunks
+          // lines = app.randomizeArray(lines);
+
+          //Get two line selection
+          // const lyricSelection =  lines[0].join('\n');
+          console.log(`lyricSelection:
+          `, lyricSelection );
+        });
+
+      lyricsPromises.push(lyricsPromise);
+    });
+    console.log(`lyrics promises`, lyricsPromises);
+
+    // console.log(`inside getLyrics: `,  tracksList);
+
+    return tracksList;
+  });
+}
 
 //Data Manipulate Functions
+
+//This function was taken from: https://gist.github.com/ourmaninamsterdam/1be9a5590c9cf4a0ab42#user-content-randomise-an-array
+app.randomizeArray = function (arr) {
+  var buffer = [], start;
+
+  for(var i = arr.length; i >= arr.length && i > 0;i--) {
+      start = Math.floor(Math.random() * arr.length);
+      buffer.push(arr.splice(start, 1)[0])
+  };
+
+  return buffer;
+}
+
+//function borrowed from
+//https://stackoverflow.com/questions/4959975/generate-random-number-between-two-numbers-in-javascript
+app.randomRange = function (min,max) {
+    return Math.floor(Math.random()*(max-min+1)+min);
+}
 
 //A utility function used with the getGenre's function
 app.makeObjectFromArrays = function (keys, values) {
@@ -285,20 +367,33 @@ app.getGenres = function (tracksData) {
 $(function(){
    app.addGenreOptions();
 
-    const musicPromise = app.musixRequest()
-        .then( function (result){
-            // app.getGenres(result);
+    const tracksPromise = app.musixRequest()
+        .then( function (sortedTrackInfo){
+          console.log(sortedTrackInfo);
+          return sortedTrackInfo;
         });
-    // app.musixRequest(lyricConfig);
-    // app.giphyRequest('Eminem');
 
-    // console.log(`promise`, musicPromise);
+
 
     //Form event handler
     $('.game-options').on("submit", function (event) {
         event.preventDefault();
-       const formValues =  app.getFormSubmit(event);
-       console.log(`formvalues: `, formValues);
+        const genreSelected = $('#genre').val();
+
+        let lyricsPromise;
+        if (genreSelected) {
+          lyricsPromise = app.getLyrics(tracksPromise, genreSelected);
+          lyricsPromise.then( (lyrics) => {
+            console.log(`lyrics: `, lyrics);
+
+          });
+        }// end of if
+        else {
+          console.log("Please select a genre");
+        }
+
+
+
     });
 
 
