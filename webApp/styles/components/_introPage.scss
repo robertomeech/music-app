@@ -3,7 +3,6 @@
     background-size: cover;
     width: 80%;
     margin: 0 auto;
-    height: 50vh;
 }
 
 .game-options {
@@ -12,7 +11,7 @@
     flex-direction: column;
     select {
         width: 200px;
-        height: 70px;
+        height: 75px;
         margin-top: 5%;
         text-transform: capitalize;
         font-family: $baseFont;

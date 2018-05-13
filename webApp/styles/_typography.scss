@@ -1,9 +1,3 @@
-$baseFont: 'Londrina Outline', cursive;
-$accentFont: 'Alegreya', serif;
-
-$primaryColor: #8884ff;
-$secondaryColor: #c0d6df;
-
 html {
     font-size: 62.5%;
 }
@@ -18,7 +12,7 @@ h1 {
 }
 
 h2 {
-    font-family: $baseFont;
+    font-family: $accentFont;
     text-align: center;
     font-size: 3.5rem;
     width: 60%;
@@ -29,7 +23,7 @@ h2 {
 
 h3 {
     font-family: $baseFont;
-    font-size: 6rem;
+    font-size: 8rem;
     color: $primaryColor;
     margin: 50px 0 20px;
     padding-top: 50px;
@@ -45,8 +39,27 @@ h4 {
 
 .lyrics p {
     font-family: $accentFont;
-    text-align: left;
-    font-size: 2rem;
+    text-align: center;
+    font-size: 2.5rem;
+}
+
+.feedback h2 {
+    font-size: 8rem;
+    font-family: $baseFont;
+}
+
+.feedback h3 {
+    font-family: $accentFont;
+    color: $secondaryColor;
+    margin: 0;
+    padding: 0;
+    font-size: 3rem;
+}
+
+h6 {
+    font-family: $baseFont;
+    font-size: 3.5rem;
+    margin: 0;
 }
 
 
@@ -54,3 +67,4 @@ footer {
     font-family: $baseFont;
     font-size: 1.5rem;
 }
+
