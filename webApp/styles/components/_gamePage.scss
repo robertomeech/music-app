@@ -11,12 +11,13 @@
         line-height: 1.75;
         margin: 0 auto;
         padding-bottom: 50px;
+        text-align: center;
     }
 }
 
 .selection {
     background: $secondaryColor;
-    padding: 50px 50px;
+    padding: 25px 25px;;
     justify-content: space-between;
     display: flex;
     .answers {
