@@ -222,7 +222,7 @@ app.giphyRequest = function(artistSearch){  //parameter is relative to the funct
 }
 
 app.getLyrics = function (tracksPromise, genre) {
-  return tracksPromise.then( (genreSortedTracks) => {
+  const updatedTracksPromise  =  tracksPromise.then( (genreSortedTracks) => {
 
     //Select the list of tracks for just the chosen genre
     let tracksList = genreSortedTracks[genre];
@@ -235,20 +235,25 @@ app.getLyrics = function (tracksPromise, genre) {
     tracksList = tracksList.slice(0,5);
     console.log(`SLICED TRACKSLIST: `,tracksList )
 
+    //Create a new array of track promises that has selected lyrics added to each result
     trackWithLyricsPromises = tracksList.map(track => {
         return app.lyricsRequest(track);
     });
 
+    //Wait for all the track promises to complete and store the results to an updated tracks promise
      const tracksUpdatedPromise = Promise.all(trackWithLyricsPromises);
 
 
 
-    tracksUpdatedPromise.then((res) => console.log(res) );
+    tracksUpdatedPromise.then((res) => console.log(`UPDATED TRACKS: `,   res) );
 
     return tracksUpdatedPromise;
 
-  });//End of then method for tracksPromise
+    });//End of then method for tracksPromise
+
+    return updatedTracksPromise;
 }
+
 
 
 app.makeQuestions = function (numberOfQuestions, genre) {
@@ -256,60 +261,84 @@ app.makeQuestions = function (numberOfQuestions, genre) {
         .then(info => {
              //Remove tracks without selected lyrics
             info =  info.filter(track => track.selected_lyrics );
-            console.log(`INFO FILTERED TO HAVE SELECTED LYRICS`, info);
+            // console.log(`INFO FILTERED TO HAVE SELECTED LYRICS`, info);
 
             //GET UNIQUE ARTIST LIST
             let artistList = info.map((track) => track.artist_name  );
             artistList = (new Set(artistList));
             artistList = Array.from(artistList);
 
+            let artistLists = {
+               "all": artistList
+            }
 
+            //Make a list at the key value of each artist_name, with the value of the other artist names
+            artistList.forEach((name, index, arr) => {
+                //copy the artist name array
+                let thisList =  arr.slice();
+
+                //Remove this artist's name from the array
+                thisList.splice(index,1);
+                artistLists[name] = thisList;
+            } );
+
+            console.log(`artist lists: `, artistLists  );
             const questions = [];
-            infoIndex = 0;
-            lyricIndex = 0;
-            for (let i = 0; i < numberOfQuestions; i++) {
+            // infoIndex = 0;
+            // lyricIndex = 0;
+            let i = 0;
+            while (i < numberOfQuestions) {
                 let question = {};
-                let track = info[infoIndex];
-                {artist_name, album_name, track_name, selected_lyrics  } = track;
 
-                if (track.selected_lyrics.length > lyricIndex ) {
-                    question.lyrics = selected_lyrics[lyricIndex];
+                //Select a random track index
+                let infoIndex = app.randomRange(0, info.length -1 );
+
+                let track = info[infoIndex];
+                console.log("track: ", track);
+
+                //Destructure the properties inside track to variables
+                const {artist_name, album_name, track_name, selected_lyrics  } = track;
+
+                //Check to see if there are still selected lyrics at the indicated track
+                if (track.selected_lyrics.length > 0 ) {
+
+                    //Remove first selected lyrics from the list and set it equal to question lyrics
+                    question.lyrics = selected_lyrics.shift();
 
 
                     question.answer = {
                         artist_name, album_name, track_name
                     };
-                    console.log(question);
+
+                    //Randomize the arist list for this artist
+                    let otherArtists  = app.randomizeArray( artistLists[artist_name] );
+
+                    question.choices =  app.randomizeArray ([artist_name, otherArtists[0], otherArtists[1], otherArtists[2]  ] );
+                    // console.log(`question: `,  question);
+
+                    //Add question to the question array
+                    questions.push(question);
+
+                    //Increment i since a question has been created
+                    i++;
 
                 } else {
-
-                    //incremetn info id, stanza id
-
-
+                    //Remove track that has no more selected lyrics, do not increment i, since no question was created.
+                    info.splice(infoIndex, 1);
                 }
 
-
-                //Add other artists to questions
-
-
-
-
             }
+            console.log(`questions: `,  questions )
+        });//END OF THEN METHOD ON GETLYRICS
 
-        });
+        // Psedo Code
 
-
-
-
-    // music =  getlyrics
-	// for i < numofquestions
-	// 	//check if lyrics match is false
 	// 	possibleAnswers {artist1, artist2, etc}
 
 	// 	answer = {aristName
 	// 	songName
-		// selectedLyrics}
-}
+	// 	selectedLyrics}
+}//END OF MAKE QUESTIONS FUNCTION
 
 //Data Manipulate Functions
 
@@ -429,6 +458,7 @@ $(function(){
           return sortedTrackInfo;
         });
 
+            // console.log('Get LYRICS: ',   app.getLyrics(app.tracksPromise, "Hip Hop/Rap" )) ;
 
 
     //Form event handler
@@ -436,14 +466,11 @@ $(function(){
         event.preventDefault();
         const genreSelected = $('#genre').val();
 
-        let lyricsPromise;
+        let questionsPromise;
         if (genreSelected) {
 
-          /* lyricsPromise = */ app.makeQuestions(1, genreSelected);
-        //   lyricsPromise.then( (lyrics) => {
-        //     // console.log(`lyrics: `, lyrics);
+           questionsPromise = app.makeQuestions(5, genreSelected);
 
-        //   });
         }// end of if
         else {
           console.log("Please select a genre");
