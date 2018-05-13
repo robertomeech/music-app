@@ -304,3 +304,9 @@ $(function(){
 
 });
 
+$('.resetButton').on('click', function (e) {
+    e.preventDefault();
+    // console.log('reset');
+    window.location.reload(true);
+}); 
+
