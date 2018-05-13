@@ -1,0 +1,68 @@
+.introPage {
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(././images/denisse-leon-395932-unsplash.jpg);
+    background-size: cover;
+    width: 80%;
+    margin: 0 auto;
+    height: 50vh;
+}
+
+.game-options {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    select {
+        width: 200px;
+        height: 70px;
+        margin-top: 5%;
+        text-transform: capitalize;
+        font-family: $baseFont;
+        letter-spacing: 1.1px;
+        font-size: 3rem;
+        font-weight: bold;
+        padding: 10px;
+        color: black;
+        appearance: none;
+        border: none;
+        text-align: center;
+        transition: all 0.4s ease;
+         &:hover {
+            background-color: $primaryColor;
+            color: $secondaryColor;
+        }
+    }
+    input {
+        width: 200px;
+        height: 75px;
+        margin: 2.5% 0;
+        text-transform: uppercase;
+        font-family: $baseFont;
+        font-size: 3rem;
+        font-weight: bold;
+        letter-spacing: 10px;
+        padding: 10px;
+        background-color: $secondaryColor;
+        border: none;
+        color: black;
+        font-weight: bold;
+        transition: all 0.4s ease;
+        &:hover {
+            background-color: $primaryColor;
+            color: $secondaryColor;
+        }
+    }
+}
+ 
+
+
+@media(max-width: 900px) {
+    h2 {
+        width: 80%;
+    }
+}
+
+@media(max-width: 650px) {
+    .introPage {
+        width: 100%;
+    }
+}
+
