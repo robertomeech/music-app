@@ -111,15 +111,19 @@ app.musixRequest = function() { //Options is an object with the config for the r
         console.log(`Musix API Result:
         ` , result);
 
+        //Use .map() to create a promise called tracksInfo which contains a new array of just the data we need.
+
         const tracksInfo = result.message.body.track_list.map(track => {
-        const { track_id, artist_name, album_name, track_name } =  track.track;
 
-        const genreList = track.track.primary_genres.music_genre_list;
-        let genre_name = "";
-         if (genreList.length > 0) {
-            genre_name = genreList[0].music_genre.music_genre_name;
-         }
+            //Destructure the track data
+            const { track_id, artist_name, album_name, track_name } =  track.track;
 
+            const genreList = track.track.primary_genres.music_genre_list;
+            let genre_name = "";
+            if (genreList.length > 0) {
+                genre_name = genreList[0].music_genre.music_genre_name;
+            }
+            //Add genre name
             return {track_id, artist_name, album_name, track_name, genre_name};
         })
 
@@ -153,51 +157,41 @@ app.filterByGenre = function(tracksInfo, genreName) {
 }
 
 //LYRICS SEARCH
-app.lyricsRequest = function(trackId){
-    const lyrics = $.ajax({
+app.lyricsRequest = function(track){
+
+    const trackWithLyrics = $.ajax({
         type: 'GET',
         url: app.musixUrl + app.musixMethods.lyrics, // OPTIONS MUST INCLUDE METHOD
         dataType: "jsonp",
-        jsonpCallback: 'jsonp_callback',
+        // jsonpCallback: 'jsonp_callback',
         contentType: 'application/json',
         data: {
             apikey: app.musixApiKey,
             format: 'jsonp',
-            callback: 'jsonp_callback',
+            // callback: 'jsonp_callback',
 
-            track_id: trackId,
-            page_size: 100
-            // page: 2,
+            track_id: track.track_id,
 
-
-            // IF WE DO ARTIST SEARCH
-
-            //Track Search
-            // f_lyrics_language: 'en',
-            // q_artist: (options.artist) ? options.artist : '',
-            //sort by track popularity
-            // s_track_rating: true,
         }
     })
         .then(function (lyrics) {
         //     console.log(`Musix API lyrics:
         // ` , lyrics.message.body.lyrics.lyrics_body);
 
-            const lyricsUnedited = lyrics.message.body.lyrics.lyrics_body;
-            // console.log(`un-edited lyrics inside API request:
+            lyrics = lyrics.message.body.lyrics.lyrics_body;
 
-            // `,  lyricsUnedited);
+            //Trim the dislaimer text from the lyrics
+            lyrics = app.trimLyrics(lyrics);
 
-            const lyricsEdited = app.trimLyrics(lyricsUnedited);
-            // console.log(`edited lyrics inside API request:
+            const selectedLyrics = app.selectLyrics(lyrics);
 
-            // `,  lyricsEdited);
-            return lyricsEdited;
+            track.selected_lyrics = selectedLyrics;
+            return track;
 
 
         });
 
-        return lyrics;
+        return trackWithLyrics;
 
 }
 
@@ -235,63 +229,125 @@ app.getLyrics = function (tracksPromise, genre) {
 
     //Randomize tracks list
     tracksList = app.randomizeArray(tracksList);
-    console.log(`randomized tracksList`,tracksList )
 
     //Slice the tracks list to no more than 10 tracks
-    //3 for now to not waste api requests
-    tracksList = tracksList.slice(0,6);
-    console.log(`sliced tracksList`,tracksList )
-    let lyricsPromises = [];
-    tracksList.forEach(track => {
+    //5 for now to not waste api requests
+    tracksList = tracksList.slice(0,5);
+    console.log(`SLICED TRACKSLIST: `,tracksList )
 
-      const lyricsPromise = app.lyricsRequest(track.track_id)
-        .then(lyric => {
-          console.log(lyric);
-          let stanzas = lyric.split('\n\n');
+    trackWithLyricsPromises = tracksList.map(track => {
+        return app.lyricsRequest(track);
+    });
 
-          //Remove the first stanza
-          stanzas.shift();
+     const tracksUpdatedPromise = Promise.all(trackWithLyricsPromises);
 
-          //filter stanzas with less than 4 lines
-          stanzas = stanzas.filter(stanza => stanza.split('\n').length >= 4)
 
-          //randomize stanzas
-          stanzas = app.randomizeArray(stanzas);
 
-          let lines = stanzas[0].split('\n');
+    tracksUpdatedPromise.then((res) => console.log(res) );
 
-          const randomOffset = app.randomRange(0, lines.length-4);
+    return tracksUpdatedPromise;
 
-          //select 4 random lines from the stanza
-          let lyricSelection =  lines.slice(randomOffset, randomOffset + 4);
-          lyricSelection =  lyricSelection.join('\n');
+  });//End of then method for tracksPromise
+}
 
-          // //Get two lines per sub array e.g.,  [[line1, line2  ], [line3, line4  ], etc   ]
-          // lines =  _.chunk(lines, 2);
 
-          // //Filter our single line arrays
-          // lines = lines.filter(twoLines => twoLines.length === 2);
+app.makeQuestions = function (numberOfQuestions, genre) {
+    app.getLyrics(app.tracksPromise, genre)
+        .then(info => {
+             //Remove tracks without selected lyrics
+            info =  info.filter(track => track.selected_lyrics );
+            console.log(`INFO FILTERED TO HAVE SELECTED LYRICS`, info);
 
-          // //Randomize two line chunks
-          // lines = app.randomizeArray(lines);
+            //GET UNIQUE ARTIST LIST
+            let artistList = info.map((track) => track.artist_name  );
+            artistList = (new Set(artistList));
+            artistList = Array.from(artistList);
 
-          //Get two line selection
-          // const lyricSelection =  lines[0].join('\n');
-          console.log(`lyricSelection:
-          `, lyricSelection );
+
+            const questions = [];
+            infoIndex = 0;
+            lyricIndex = 0;
+            for (let i = 0; i < numberOfQuestions; i++) {
+                let question = {};
+                let track = info[infoIndex];
+                {artist_name, album_name, track_name, selected_lyrics  } = track;
+
+                if (track.selected_lyrics.length > lyricIndex ) {
+                    question.lyrics = selected_lyrics[lyricIndex];
+
+
+                    question.answer = {
+                        artist_name, album_name, track_name
+                    };
+                    console.log(question);
+
+                } else {
+
+                    //incremetn info id, stanza id
+
+
+                }
+
+
+                //Add other artists to questions
+
+
+
+
+            }
+
         });
 
-      lyricsPromises.push(lyricsPromise);
-    });
-    console.log(`lyrics promises`, lyricsPromises);
 
-    // console.log(`inside getLyrics: `,  tracksList);
 
-    return tracksList;
-  });
+
+    // music =  getlyrics
+	// for i < numofquestions
+	// 	//check if lyrics match is false
+	// 	possibleAnswers {artist1, artist2, etc}
+
+	// 	answer = {aristName
+	// 	songName
+		// selectedLyrics}
 }
 
 //Data Manipulate Functions
+
+app.selectLyrics = function (lyric) {
+
+    let stanzas = lyric.split('\n\n');
+
+    //Remove the first stanza
+    stanzas.shift();
+    // console.log(`stanzas array before filtering: `, stanzas);
+
+    //filter stanzas with less than 4 lines
+    stanzas = stanzas.filter(stanza => stanza.split('\n').length >= 4)
+    // console.log(`stanzas array after filtering: `, stanzas);
+    //randomize stanzas
+
+    if (stanzas.length > 0) {
+
+        stanzas = app.randomizeArray(stanzas);
+
+        stanzas = stanzas.map (stanza => {
+            //select first 4 lines from the stanza
+            // console.log(`stanza before split/slice`,  stanza)
+            stanza = stanza.split('\n', 4);
+
+            // console.log(`stanza after split slice: `,  stanza)
+            //Rejoin into a multi-line string
+            return stanza.join('\n');
+        });
+        // console.log(`Return value fo selectLyrics`,  stanzas);
+        return stanzas;
+    } else {
+        console.log("THERE ARE NO STANZAS!!  ");
+        return null;
+    }
+
+}//End of selectLyrics function
+
 
 //This function was taken from: https://gist.github.com/ourmaninamsterdam/1be9a5590c9cf4a0ab42#user-content-randomise-an-array
 app.randomizeArray = function (arr) {
@@ -367,7 +423,7 @@ app.getGenres = function (tracksData) {
 $(function(){
    app.addGenreOptions();
 
-    const tracksPromise = app.musixRequest()
+    app.tracksPromise = app.musixRequest()
         .then( function (sortedTrackInfo){
           console.log(sortedTrackInfo);
           return sortedTrackInfo;
@@ -382,11 +438,12 @@ $(function(){
 
         let lyricsPromise;
         if (genreSelected) {
-          lyricsPromise = app.getLyrics(tracksPromise, genreSelected);
-          lyricsPromise.then( (lyrics) => {
-            console.log(`lyrics: `, lyrics);
 
-          });
+          /* lyricsPromise = */ app.makeQuestions(1, genreSelected);
+        //   lyricsPromise.then( (lyrics) => {
+        //     // console.log(`lyrics: `, lyrics);
+
+        //   });
         }// end of if
         else {
           console.log("Please select a genre");
