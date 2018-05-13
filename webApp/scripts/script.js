@@ -12,9 +12,11 @@ app.genres = {
     "Country": 6
   }
 
+app.score = 0;
 
 
-  app.questionIndex = 0;
+
+app.questionIndex = 0;
 
   // Other global vars that are dynamically generated:
     //app.tracksPromise
@@ -459,19 +461,27 @@ app.handleAnswer = function(e) {
     app.questionsPromise.then(questions => {
         const question = questions[app.questionIndex - 1];
         const correctArtist = question.answer.artist_name;
-        let score = 0;
         console.log(correctArtist);
         if ($(e.target).text() === correctArtist) {
             console.log('correct');
-            score = score + 1;
+            app.score = app.score + 1;
             $('.feedback h2').text("CORRECT");
-            $('.score').text(score);
+            $('.score').text(app.score);
         } else {
             console.log(`incorrect`);
             $('.feedback h2').text("WRONG");
         }
         $('.feedback .artistName').text(correctArtist);
         $('.feedback .trackName').text(question.answer.track_name);
+        const rand = app.randomRange(0,9);
+        question.answer.gifs_promise.then(gifs => { 
+            console.log(`rand inside handle answer: `, rand);
+            
+            console.log(`GIFS INSIDE HANDLE ANSWER: `, gifs );
+            
+            const gifUrl = gifs[rand];
+            $('.giphy').attr('src', gifUrl );
+        });
     });
 }
 
@@ -517,13 +527,14 @@ $(function(){
           console.log("Please select a genre");
         }
     });
-
-
+    $('.selection').on('click', 'button', app.handleAnswer);
+    
+    $('.resetButton').on('click', function (e) {
+        e.preventDefault();
+        // console.log('reset');
+        window.location.reload(true);
+    });
 });
 
-$('.resetButton').on('click', function (e) {
-    e.preventDefault();
-    // console.log('reset');
-    window.location.reload(true);
-});
+
 
