@@ -7,23 +7,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link rel="stylesheet" href="styles/style.css">
-  <title>Music Lyrics Game</title>
+  <title>Who Dat?</title>
+  <link href="https://fonts.googleapis.com/css?family=Alegreya:400,700|Londrina+Outline" rel="stylesheet">
+
 </head>
 
 <body>
+  <header>
+    <div class="backdrop">
+      <h1 class="text">Who Dat?</h1>
+    </div>
+  </header>
+  <!-- MAIN BEGINS -->
+  <main>
+    <!-- INTRO PAGE SECTION BEGINS -->
+      <section class="introPage">
+        <h2>So you think you know how to listen to music?
+        Pick your favourite genre and prove it.</h2>
+        <div class="playForm">
+          <form action="" class="game-options">
+            <!-- <label for="artist">Artist Name</label>
+            <input type="text" id="artist"> -->
+            <label for="genre" class="hidden custom-select">Genre</label>
+            <select name="genre" id="genre">
+              <option value="">Choose genre</option>
+              <option value="chart">Top 100</option>
+            </select>
+            <input type="submit" value="Play">
+          </form>
+        </div>
+      </section>
+      <!-- END OF INTRO PAGE SECTION -->
+      <section class="gamePage">
+        <div class="timer"></div>
+        <div class="lyricsWrapper">
+            <h3>Who dis?</h3>
+          <div class="lyrics">
+            <p class="displayedLyrics">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis quas, magni, rerum debitis dolor, mollitia reiciendis voluptatem consectetur vero quasi rem eum eligendi repudiandae ipsa at dolorum qui aliquid pariatur optio. Rerum vero possimus sit quia incidunt, porro tempore voluptas laboriosam repellendus facere voluptatum sint sequi debitis velit est iste maxime aspernatur suscipit? Saepe dolore id ipsa neque pariatur porro eveniet amet beatae. Deserunt aspernatur quo necessitatibus rem inventore ea consequuntur, tenetur, blanditiis molestias perspiciatis labore a suscipit nihil distinctio possimus error culpa autem aperiam. Possimus, quidem accusantium! Enim doloribus dolorum ipsam quidem deserunt labore maiores ratione nobis officiis praesentium?</p>
+          </div>
+        </div>
+        <div class="selection">
+          <button class="answers">Artist</button>
+          <button class="answers">Artist</button>
+          <button class="answers">Artist</button>
+          <button class="answers">Artist</button>
+        </div>
 
+      </section>
+  </main>
+  <!-- MAIN ENDS -->
+<footer>
+  <p> &copy; 2018 Roberto Meech & Avi Craimer</p>
+</footer>
     <!-- We should have two forms. One for artist and one for genre. This makes it obvious that you can only choose one or the other.  -->
-  <form action="" class="game-options">
-    <!-- <label for="artist">Artist Name</label>
-    <input type="text" id="artist"> -->
-    <label for="genre">Genre</label>
-    <select name="genre" id="genre">
-      <option value="">Choose genre</option>
-      <option value="chart">Top 100</option>
-    </select>
-    <input type="submit" value="Get">
-  </form>
   <script src="scripts/lodash.js"></script>
+  <script src="jquery.selectric.min.js"></script>
   <script src='https://code.jquery.com/jquery-3.2.1.min.js' integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='crossorigin='anonymous'></script>
   <script src="scripts/script.js"></script>
 </body>

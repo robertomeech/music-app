@@ -1,0 +1,49 @@
+$baseFont: 'Londrina Outline', cursive;
+$accentFont: 'Alegreya', serif;
+
+$primaryColor: #8884ff;
+$secondaryColor: #c0d6df;
+
+html {
+    font-size: 62.5%;
+}
+
+
+h1 {
+    font-family: $baseFont;
+    font-size: 10rem;
+    margin: 0;
+    padding: 0;
+    text-transform: uppercase;
+}
+
+h2 {
+    font-family: $baseFont;
+    text-align: center;
+    font-size: 3.5rem;
+    width: 60%;
+    padding-top: 2.5%;
+    margin: 0 auto;
+    color: white;
+}
+
+h3 {
+    font-family: $baseFont;
+    font-size: 6rem;
+    color: $primaryColor;
+    margin: 50px 0 20px;
+    padding-top: 50px;
+    text-transform: uppercase;
+}
+
+.lyrics p {
+    font-family: $accentFont;
+    text-align: left;
+    font-size: 2rem;
+}
+
+
+footer {
+    font-family: $baseFont;
+    font-size: 1.5rem;
+}
