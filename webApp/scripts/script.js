@@ -200,7 +200,7 @@ app.trimLyrics = function (rawLyrics) {
 
 //Giphy
 app.giphyRequest = function(artistSearch){  //parameter is relative to the function
-    $.ajax ({
+   return  $.ajax ({
         type: 'GET',
         url: app.giphyUrl,
         dataType: 'json',
@@ -213,7 +213,15 @@ app.giphyRequest = function(artistSearch){  //parameter is relative to the funct
 
     })
     .then(function(result){
-       return result;
+        console.log(`Giphy Result: `, result);
+        let gifs = [];
+
+        for (let i = 0; i < 10; i++) {
+           gifs.push ( result.data[i].images.original.url );
+        }
+        console.log(`10 gifs: `, gifs);
+
+       return gifs;
     })
 }
 
@@ -307,6 +315,10 @@ app.makeQuestions = function (numberOfQuestions, genre) {
                         artist_name, album_name, track_name
                     };
 
+                    question.answer.gifs_promise = app.giphyRequest(artist_name);
+
+                    // question.answer.gifs_promise.then(res => console.log(`gifs in make question: `, res )  );
+
                     //Randomize the arist list for this artist
                     let otherArtists  = app.randomizeArray( artistLists[artist_name] );
 
@@ -337,7 +349,7 @@ app.makeQuestions = function (numberOfQuestions, genre) {
 	// 	selectedLyrics}
 }//END OF MAKE QUESTIONS FUNCTION
 
-//Data Manipulate Functions
+
 
 app.selectLyrics = function (lyric) {
 
@@ -345,37 +357,34 @@ app.selectLyrics = function (lyric) {
 
     //Remove the first stanza
     stanzas.shift();
-    // console.log(`stanzas array before filtering: `, stanzas);
 
     //filter stanzas with less than 4 lines
     stanzas = stanzas.filter(stanza => stanza.split('\n').length >= 4)
-    // console.log(`stanzas array after filtering: `, stanzas);
-    //randomize stanzas
 
     if (stanzas.length > 0) {
 
+        //randomize stanzas
         stanzas = app.randomizeArray(stanzas);
 
         stanzas = stanzas.map (stanza => {
             //select first 4 lines from the stanza
-            // console.log(`stanza before split/slice`,  stanza)
             stanza = stanza.split('\n', 4);
 
-            // console.log(`stanza after split slice: `,  stanza)
             //Rejoin into a multi-line string
             return stanza.join('\n');
         });
         // console.log(`Return value fo selectLyrics`,  stanzas);
         return stanzas;
     } else {
-        console.log("THERE ARE NO STANZAS!!  ");
         return null;
     }
 
 }//End of selectLyrics function
 
 
-//This function was taken from: https://gist.github.com/ourmaninamsterdam/1be9a5590c9cf4a0ab42#user-content-randomise-an-array
+//UTILITY FUNCTIONS
+
+//This function was borrowed from: https://gist.github.com/ourmaninamsterdam/1be9a5590c9cf4a0ab42#user-content-randomise-an-array
 app.randomizeArray = function (arr) {
   var buffer = [], start;
 
@@ -439,7 +448,6 @@ app.loadQuestion = function () {
 
         question.choices.forEach(artistChoice =>  $('.selection').append(`<button class="answers">${artistChoice}</button>`)   );
 
-
         app.questionIndex++;
 
     });
@@ -447,34 +455,28 @@ app.loadQuestion = function () {
 
 
 
-//     - For each API build a get function that takes a parameter object as an argument
-//         - Use the parameter object to set the values of the $.ajax parameters
-//             - Use a then() method to do something with the returned data(see data processing).
-
-//                 Processing
-// --Lyrics getter function to get the lyrics from the object and manipulate the text as needed
-// --Process other info like, track name, album, etc for display after the player answers the challenge
 
 
-// Game Functionality
-// --Create a function to randomly generate a lyric challenge
-// --Create a function to post the challenge to the page
-// --Let them know what player is up
-// --Accept user feedback through click or touch
-// --Display feedback based on whether they were correct
-// --Adjust the score for that player
-// 	--Track players with an array of player object.Properties includes score and player name(Stretch goal: have player avatars).
+
+
 
 //Document Ready Function
 $(function(){
-   app.addGenreOptions();
+    app.addGenreOptions();
+
+
 
     app.tracksPromise = app.musixRequest()
         .then( function (sortedTrackInfo){
-          console.log(sortedTrackInfo);
-          return sortedTrackInfo;
-        });
+          console.log(`sorted track info from musixRequest`,  sortedTrackInfo);
+          let rand =  app.randomRange(0,  sortedTrackInfo['Top 100'].length -1);
+          let randomArtist =  sortedTrackInfo['Top 100'][rand].artist_name;
+          console.log('Random Artist: ', randomArtist);
+          let gifsPromise =  app.giphyRequest(randomArtist) ;
+          gifsPromise.then(res => console.log(`gifs promise: `,  res)  );
 
+          return sortedTrackInfo;
+    });
             // console.log('Get LYRICS: ',   app.getLyrics(app.tracksPromise, "Hip Hop/Rap" )) ;
 
 
@@ -493,9 +495,6 @@ $(function(){
         else {
           console.log("Please select a genre");
         }
-
-
-
     });
 
 
