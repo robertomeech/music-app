@@ -453,6 +453,27 @@ app.loadQuestion = function () {
     });
 }
 
+app.handleAnswer = function(e) {
+    e.preventDefault();
+    console.log(e.target);
+    app.questionsPromise.then(questions => {
+        const question = questions[app.questionIndex - 1];
+        const correctArtist = question.answer.artist_name;
+        let score = 0;
+        console.log(correctArtist);
+        if ($(e.target).text() === correctArtist) {
+            console.log('correct');
+            score = score + 1;
+            $('.feedback h2').text("CORRECT");
+            $('.score').text(score);
+        } else {
+            console.log(`incorrect`);
+            $('.feedback h2').text("WRONG");
+        }
+        $('.feedback .artistName').text(correctArtist);
+        $('.feedback .trackName').text(question.answer.track_name);
+    });
+}
 
 
 
