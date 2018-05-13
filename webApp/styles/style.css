@@ -283,7 +283,7 @@ footer {
       background-color: #8884ff;
       color: #c0d6df; }
 
-.game-options option {
+.game-options select option {
   font: "Alegreya", serif; }
 
 @media (max-width: 900px) {
