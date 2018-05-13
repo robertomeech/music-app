@@ -465,9 +465,6 @@ app.handleAnswer = function(e) {
         $('.feedback .artistName').text(correctArtist);
         $('.feedback .trackName').text(question.answer.track_name);
     });
-
-    
-
 }
 
 
