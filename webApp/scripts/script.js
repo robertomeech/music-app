@@ -10,22 +10,15 @@ app.genres = {
     "Hip Hop/Rap": 18,
     "Alternative": 20,
     "Country": 6
-    // "Dance": 17,
-    // "Heavy Metal": 1153,
-    // "R&B/Soul": 15,
-    // "Rock": 21
   }
-  //RESULTS OF SORTING TOP 100 BY GENRE
-  // Length of Pop is 18
-  // Length of Hip Hop/Rap is 10
-  // Length of Alternative is 8
-  // Length of Country is 20
-  //NOT ENOUGH OF THESE
-  // Length of Dance is 3
-  // Length of Heavy Metal is 1
-  // Length of R&B/Soul is 3
-  // Length of Rock is 1
 
+
+
+  app.questionIndex = 0;
+
+  // Other global vars that are dynamically generated:
+    //app.tracksPromise
+    // app.questionsPromise
 
 app.addGenreOptions = function () {
     for (genre in app.genres) {
@@ -116,7 +109,10 @@ app.musixRequest = function() { //Options is an object with the config for the r
         const tracksInfo = result.message.body.track_list.map(track => {
 
             //Destructure the track data
-            const { track_id, artist_name, album_name, track_name } =  track.track;
+            let { track_id, artist_name, album_name, track_name } =  track.track;
+
+            //Get just the primary artist's name removing featured artists
+            artist_name = artist_name.split(' feat.')[0];
 
             const genreList = track.track.primary_genres.music_genre_list;
             let genre_name = "";
@@ -257,7 +253,8 @@ app.getLyrics = function (tracksPromise, genre) {
 
 
 app.makeQuestions = function (numberOfQuestions, genre) {
-    app.getLyrics(app.tracksPromise, genre)
+    app.numberOfQuestions = numberOfQuestions;
+    return app.getLyrics(app.tracksPromise, genre)
         .then(info => {
              //Remove tracks without selected lyrics
             info =  info.filter(track => track.selected_lyrics );
@@ -282,7 +279,7 @@ app.makeQuestions = function (numberOfQuestions, genre) {
                 artistLists[name] = thisList;
             } );
 
-            console.log(`artist lists: `, artistLists  );
+            // console.log(`artist lists: `, artistLists  );
             const questions = [];
             // infoIndex = 0;
             // lyricIndex = 0;
@@ -291,10 +288,10 @@ app.makeQuestions = function (numberOfQuestions, genre) {
                 let question = {};
 
                 //Select a random track index
-                let infoIndex = app.randomRange(0, info.length -1 );
+                let infoIndex = app.randomRange(0, info.length - 1);
 
                 let track = info[infoIndex];
-                console.log("track: ", track);
+                // console.log("track: ", track);
 
                 //Destructure the properties inside track to variables
                 const {artist_name, album_name, track_name, selected_lyrics  } = track;
@@ -326,9 +323,9 @@ app.makeQuestions = function (numberOfQuestions, genre) {
                     //Remove track that has no more selected lyrics, do not increment i, since no question was created.
                     info.splice(infoIndex, 1);
                 }
-
             }
-            console.log(`questions: `,  questions )
+            // console.log(`questions: `,  questions )
+            return questions;
         });//END OF THEN METHOD ON GETLYRICS
 
         // Psedo Code
@@ -429,6 +426,26 @@ app.getGenres = function (tracksData) {
 }
 
 
+/// PAGE LOADING FUNCTIONS
+
+app.loadQuestion = function () {
+
+    app.questionsPromise.then( questions => {
+        const question = questions[app.questionIndex];
+        console.log(`question in load question function: `,  question);
+        const lines = question.lyrics.split('\n');
+
+        lines.forEach( line => $('.lyrics').append(`<p>${line}</p>`) ) ;
+
+        question.choices.forEach(artistChoice =>  $('.selection').append(`<button class="answers">${artistChoice}</button>`)   );
+
+
+        app.questionIndex++;
+
+    });
+}
+
+
 
 //     - For each API build a get function that takes a parameter object as an argument
 //         - Use the parameter object to set the values of the $.ajax parameters
@@ -466,11 +483,12 @@ $(function(){
         event.preventDefault();
         const genreSelected = $('#genre').val();
 
-        let questionsPromise;
+
         if (genreSelected) {
 
-           questionsPromise = app.makeQuestions(5, genreSelected);
-
+           app.questionsPromise = app.makeQuestions(5, genreSelected);
+           console.log(`questions promise: `, app.questionsPromise);
+           app.loadQuestion(app.questionIndex);
         }// end of if
         else {
           console.log("Please select a genre");
@@ -487,5 +505,5 @@ $('.resetButton').on('click', function (e) {
     e.preventDefault();
     // console.log('reset');
     window.location.reload(true);
-}); 
+});
 
