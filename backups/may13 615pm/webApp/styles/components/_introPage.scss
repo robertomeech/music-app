@@ -1,8 +1,13 @@
 .introPage {
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(././images/denisse-leon-395932-unsplash.jpg);
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3))/* , url(././images/denisse-leon-395932-unsplash.jpg) */;
     background-size: cover;
     width: 80%;
     margin: 0 auto;
+
+    &.alternative {
+
+
+    }
 }
 
 .game-options {
@@ -55,7 +60,7 @@
     font: $accentFont;
 
 }
- 
+
 
 
 @media(max-width: 900px) {
