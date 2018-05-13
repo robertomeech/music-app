@@ -36,6 +36,13 @@ h3 {
     text-transform: uppercase;
 }
 
+h4 {
+    font-family: $baseFont;
+    font-size: 8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
 .lyrics p {
     font-family: $accentFont;
     text-align: left;
