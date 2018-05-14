@@ -1,6 +1,7 @@
 .gamePage {
-    width: 80%;
+    width: 100%;
     margin: 0 auto;
+    height: 100vh;
 }
 
 .lyricsWrapper {
@@ -10,32 +11,17 @@
         width: 85%;
         line-height: 1.75;
         margin: 0 auto;
-        padding-bottom: 50px;
+        padding-bottom: 15px;
         text-align: center;
     }
 }
 
 .selection {
     background: $secondaryColor;
-    padding: 25px 25px;;
+    padding: 25px;
     justify-content: space-between;
     display: flex;
-    .answers {
-        width: 200px;
-        height: 75px;
-        border: none;
-        background: linear-gradient(to right, #4e54c8, #8f94fb);
-        font-size: 2rem;
-        font-family: $accentFont;
-        text-transform: uppercase;
-        color: white;
-        transition: all 0.4s ease;
-        &:hover {
-              background: linear-gradient(to right, #fc5c7d, #6a82fb);
-              
-        }
 
-    }
 }
 
 
@@ -43,10 +29,7 @@
     .selection {
         flex-direction: column;
         align-items: center;
-        .answers {
-            margin: 15px;
-            width: 350px;
-        }
+
     }
 }
 

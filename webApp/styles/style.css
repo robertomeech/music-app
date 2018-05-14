@@ -145,6 +145,22 @@ legend, button::-moz-focus-inner, input::-moz-focus-inner {
   clip: rect(0 0 0);
   overflow: hidden; }
 
+main {
+  height: 100vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column; }
+
+section {
+  display: none;
+  -webkit-box-flex: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1; }
+
 .score {
   background: #c0d6df;
   border: 5px solid black;
@@ -163,12 +179,38 @@ legend, button::-moz-focus-inner, input::-moz-focus-inner {
   right: 15px;
   top: 15px; }
 
+.button1 {
+  width: 200px;
+  height: 75px;
+  border: none;
+  background: -webkit-gradient(linear, left top, right top, from(#4e54c8), to(#8f94fb));
+  background: -webkit-linear-gradient(left, #4e54c8, #8f94fb);
+  background: -o-linear-gradient(left, #4e54c8, #8f94fb);
+  background: linear-gradient(to right, #4e54c8, #8f94fb);
+  font-size: 2rem;
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+  color: white;
+  -webkit-transition: all 0.4s ease;
+  -o-transition: all 0.4s ease;
+  transition: all 0.4s ease;
+  margin-top: 25px; }
+  .button1:hover {
+    background: -webkit-gradient(linear, left top, right top, from(#fc5c7d), to(#6a82fb));
+    background: -webkit-linear-gradient(left, #fc5c7d, #6a82fb);
+    background: -o-linear-gradient(left, #fc5c7d, #6a82fb);
+    background: linear-gradient(to right, #fc5c7d, #6a82fb); }
+  @media (max-width: 1160px) {
+    .button1 {
+      margin: 15px;
+      width: 350px; } }
+
 html {
   font-size: 62.5%; }
 
 h1 {
   font-family: "Londrina Outline", cursive;
-  font-size: 10rem;
+  font-size: 13rem;
   margin: 0;
   padding: 0;
   text-transform: uppercase; }
@@ -178,16 +220,15 @@ h2 {
   text-align: center;
   font-size: 3.5rem;
   width: 60%;
-  padding-top: 2.5%;
-  margin: 0 auto;
-  color: black; }
+  margin: 20px auto;
+  color: #8884ff; }
 
 h3 {
   font-family: "Londrina Outline", cursive;
   font-size: 8rem;
   color: #8884ff;
-  margin: 50px 0 20px;
   padding-top: 50px;
+  margin: 0;
   text-transform: uppercase; }
 
 h4 {
@@ -218,49 +259,58 @@ h6 {
   margin: 0; }
 
 footer {
-  font-family: "Londrina Outline", cursive;
+  font-family: "Roboto", sans-serif;
+  color: #8884ff;
   font-size: 1.5rem; }
 
-.backdrop {
-  background: url(././images/kazuend-29733-unsplash.jpg);
+.introPage {
+  background: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.6)), to(rgba(0, 0, 0, 0.6))), url(images/daniel-von-appen-285976-unsplash-radio.jpg);
+  background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(images/daniel-von-appen-285976-unsplash-radio.jpg);
+  background: -o-linear-gradient(left, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(images/daniel-von-appen-285976-unsplash-radio.jpg);
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(images/daniel-von-appen-285976-unsplash-radio.jpg);
   background-size: cover;
-  width: 50%;
-  padding: 0;
-  margin: 5rem auto; }
+  width: 100%;
+  margin: 0 auto;
+  padding: 50px;
+  height: 100vh; }
+  .introPage.top100 {
+    background: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.5)), to(rgba(0, 0, 0, 0.5))), url(images/joseph-pearson-411277-unsplash-top100.jpg);
+    background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(images/joseph-pearson-411277-unsplash-top100.jpg);
+    background: -o-linear-gradient(left, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(images/joseph-pearson-411277-unsplash-top100.jpg);
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(images/joseph-pearson-411277-unsplash-top100.jpg);
+    background-size: cover; }
+  .introPage.pop {
+    background: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.6)), to(rgba(0, 0, 0, 0.6))), url(images/samuel-zeller-103111-unsplash-pop.jpg);
+    background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(images/samuel-zeller-103111-unsplash-pop.jpg);
+    background: -o-linear-gradient(left, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(images/samuel-zeller-103111-unsplash-pop.jpg);
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(images/samuel-zeller-103111-unsplash-pop.jpg);
+    background-size: cover; }
+  .introPage.alternative {
+    background: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.6)), to(rgba(0, 0, 0, 0.6))), url(images/luke-porter-108506-unsplash-alternative.jpg);
+    background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(images/luke-porter-108506-unsplash-alternative.jpg);
+    background: -o-linear-gradient(left, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(images/luke-porter-108506-unsplash-alternative.jpg);
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(images/luke-porter-108506-unsplash-alternative.jpg);
+    background-size: cover; }
+  .introPage.hip-hop {
+    background: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.6)), to(rgba(0, 0, 0, 0.6))), url(images/matty-adame-200085-unsplash-hip-hop.jpg);
+    background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(images/matty-adame-200085-unsplash-hip-hop.jpg);
+    background: -o-linear-gradient(left, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(images/matty-adame-200085-unsplash-hip-hop.jpg);
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(images/matty-adame-200085-unsplash-hip-hop.jpg);
+    background-size: cover; }
+  .introPage.country {
+    background: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.4)), to(rgba(0, 0, 0, 0.4))), url(images/thomas-kelley-78865-unsplash-country.jpg);
+    background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(images/thomas-kelley-78865-unsplash-country.jpg);
+    background: -o-linear-gradient(left, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(images/thomas-kelley-78865-unsplash-country.jpg);
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(images/thomas-kelley-78865-unsplash-country.jpg);
+    background-size: cover; }
+  .introPage h2 span {
+    display: block; }
 
 .text {
   text-align: center;
   color: #8884ff;
   margin: 0;
-  mix-blend-mode: lighten;
-  background: #ffff;
-  border: 10px solid #8884ff; }
-
-@media (max-width: 750px) {
-  .backdrop {
-    width: 80%; } }
-
-@media (max-width: 650px) {
-  .backdrop {
-    width: 100%; } }
-
-footer {
-  margin: 0 auto;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center; }
-
-.introPage {
-  background: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.3)), to(rgba(0, 0, 0, 0.3))), url(././images/denisse-leon-395932-unsplash.jpg);
-  background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(././images/denisse-leon-395932-unsplash.jpg);
-  background: -o-linear-gradient(left, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(././images/denisse-leon-395932-unsplash.jpg);
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(././images/denisse-leon-395932-unsplash.jpg);
-  background-size: cover;
-  width: 80%;
-  margin: 0 auto; }
+  line-height: 1; }
 
 .game-options {
   display: -webkit-box;
@@ -276,14 +326,15 @@ footer {
   .game-options select {
     width: 200px;
     height: 75px;
-    margin-top: 5%;
+    margin: 10px 0;
     text-transform: capitalize;
-    font-family: "Londrina Outline", cursive;
+    font-family: "Roboto", sans-serif;
     letter-spacing: 1.1px;
-    font-size: 3rem;
+    font-size: 1.8rem;
+    text-transform: uppercase;
     font-weight: bold;
     padding: 10px;
-    color: black;
+    color: #8884ff;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -291,10 +342,10 @@ footer {
     text-align: center;
     -webkit-transition: all 0.4s ease;
     -o-transition: all 0.4s ease;
-    transition: all 0.4s ease; }
+    transition: all 0.4s ease;
+    text-shadow: 1px 1px rgba(0, 0, 0, 0.315); }
     .game-options select:hover {
-      background-color: #8884ff;
-      color: #c0d6df; }
+      background-color: #c0d6df; }
   .game-options input {
     width: 200px;
     height: 75px;
@@ -305,7 +356,7 @@ footer {
     font-weight: bold;
     letter-spacing: 10px;
     padding: 10px;
-    background-color: #c0d6df;
+    background-color: #8884ff;
     border: none;
     color: black;
     font-weight: bold;
@@ -313,8 +364,7 @@ footer {
     -o-transition: all 0.4s ease;
     transition: all 0.4s ease; }
     .game-options input:hover {
-      background-color: #8884ff;
-      color: #c0d6df; }
+      background-color: #c0d6df; }
 
 .game-options select option {
   font: "Roboto", sans-serif; }
@@ -328,8 +378,9 @@ footer {
     width: 100%; } }
 
 .gamePage {
-  width: 80%;
-  margin: 0 auto; }
+  width: 100%;
+  margin: 0 auto;
+  height: 100vh; }
 
 .lyricsWrapper {
   text-align: center;
@@ -338,38 +389,18 @@ footer {
     width: 85%;
     line-height: 1.75;
     margin: 0 auto;
-    padding-bottom: 50px;
+    padding-bottom: 15px;
     text-align: center; }
 
 .selection {
   background: #c0d6df;
-  padding: 25px 25px;
+  padding: 25px;
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex; }
-  .selection .answers {
-    width: 200px;
-    height: 75px;
-    border: none;
-    background: -webkit-gradient(linear, left top, right top, from(#4e54c8), to(#8f94fb));
-    background: -webkit-linear-gradient(left, #4e54c8, #8f94fb);
-    background: -o-linear-gradient(left, #4e54c8, #8f94fb);
-    background: linear-gradient(to right, #4e54c8, #8f94fb);
-    font-size: 2rem;
-    font-family: "Roboto", sans-serif;
-    text-transform: uppercase;
-    color: white;
-    -webkit-transition: all 0.4s ease;
-    -o-transition: all 0.4s ease;
-    transition: all 0.4s ease; }
-    .selection .answers:hover {
-      background: -webkit-gradient(linear, left top, right top, from(#fc5c7d), to(#6a82fb));
-      background: -webkit-linear-gradient(left, #fc5c7d, #6a82fb);
-      background: -o-linear-gradient(left, #fc5c7d, #6a82fb);
-      background: linear-gradient(to right, #fc5c7d, #6a82fb); }
 
 @media (max-width: 1160px) {
   .selection {
@@ -379,10 +410,7 @@ footer {
     flex-direction: column;
     -webkit-box-align: center;
     -ms-flex-align: center;
-    align-items: center; }
-    .selection .answers {
-      margin: 15px;
-      width: 350px; } }
+    align-items: center; } }
 
 @media (max-width: 650px) {
   .gamePage {
@@ -391,9 +419,6 @@ footer {
 .winnerSection {
   width: 80%;
   margin: 0 auto;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center; }
@@ -430,9 +455,6 @@ footer {
 .loserSection {
   width: 80%;
   margin: 0 auto;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center; }
@@ -473,18 +495,30 @@ footer {
 
 .feedback {
   margin: 0 auto;
-  width: 80%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
+  width: 100%;
   background: #8884ff; }
+  .feedback h2 {
+    color: #c0d6df; }
+  .feedback img {
+    margin: 20px 0;
+    width: 100%;
+    max-height: 400px; }
+  .feedbackContent {
+    margin: 0 auto;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    width: 100%; }
+    @media (min-width: 650px) {
+      .feedbackContent {
+        width: 80%; } }
+    @media (min-width: 900px) {
+      .feedbackContent {
+        width: 60%; } }
