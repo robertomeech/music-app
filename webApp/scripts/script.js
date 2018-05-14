@@ -1,10 +1,6 @@
 //GLOBAL VARIABLES
 app = {};
-//  $
-//  _
 
-
-//PAGE BUILDING FUNCTIONS
 app.genres = {
 
     "Pop": 'pop',
@@ -16,7 +12,7 @@ app.genres = {
 
 app.score = 0;
 
-
+app.numberOfQuestions = 5;
 
 app.questionIndex = 0;
 
@@ -24,6 +20,8 @@ app.questionIndex = 0;
     //app.tracksPromise
     // app.questionsPromise
 
+
+//PAGE BUILDING FUNCTIONS
 app.addGenreOptions = function () {
     for (genre in app.genres) {
         const genreId = app.genres[genre];
@@ -239,8 +237,7 @@ app.getLyrics = function (tracksPromise, genre) {
     tracksList = app.randomizeArray(tracksList);
 
     //Slice the tracks list to no more than 10 tracks
-    //5 for now to not waste api requests
-    tracksList = tracksList.slice(0,5);
+    tracksList = tracksList.slice(0,10);
     console.log(`SLICED TRACKSLIST: `,tracksList )
 
     //Create a new array of track promises that has selected lyrics added to each result
@@ -277,20 +274,20 @@ app.makeQuestions = function (numberOfQuestions, genre) {
             artistList = (new Set(artistList));
             artistList = Array.from(artistList);
 
-            let artistLists = {
-               "all": artistList
-            }
+            // let artistLists = {
+            //    "all": artistList
+            // }
 
-            //Make a list at the key value of each artist_name, with the value of the other artist names
-            artistList.forEach((name, index, arr) => {
-                //copy the artist name array
-                let thisList =  arr.slice();
+            // //Make a list at the key value of each artist_name, with the value of the other artist names
+            // artistList.forEach((name, index, arr) => {
+            //     //copy the artist name array
+            //     let thisList =  arr.slice();
 
-                //Remove this artist's name from the array
-                thisList.splice(index,1);
-                artistLists[name] = thisList;
-            } );
-
+            //     //Remove this artist's name from the array
+            //     thisList.splice(index,1);
+            //     artistLists[name] = thisList;
+            // } );
+            // console.log('ARTISTS LISTS: ', artistLists);
             // console.log(`artist lists: `, artistLists  );
             const questions = [];
             // infoIndex = 0;
@@ -323,8 +320,10 @@ app.makeQuestions = function (numberOfQuestions, genre) {
 
                     // question.answer.gifs_promise.then(res => console.log(`gifs in make question: `, res )  );
 
-                    //Randomize the arist list for this artist
-                    let otherArtists  = app.randomizeArray( artistLists[artist_name] );
+                    //Randomize the arist list for this artist, creating a copy of the artist list array
+                    let otherArtists  = app.randomizeArray( artistList ) ;
+
+                    otherArtists.splice( artistList.indexOf(artist_name), 1 );
 
                     question.choices =  app.randomizeArray ([artist_name, otherArtists[0], otherArtists[1], otherArtists[2]  ] );
                     // console.log(`question: `,  question);
@@ -391,7 +390,8 @@ app.selectLyrics = function (lyric) {
 //This function was borrowed from: https://gist.github.com/ourmaninamsterdam/1be9a5590c9cf4a0ab42#user-content-randomise-an-array
 app.randomizeArray = function (arr) {
   var buffer = [], start;
-
+  //Copy original array so as not to mutate it
+  arr = arr.slice();
   for(var i = arr.length; i >= arr.length && i > 0;i--) {
       start = Math.floor(Math.random() * arr.length);
       buffer.push(arr.splice(start, 1)[0])
@@ -443,6 +443,10 @@ app.getGenres = function (tracksData) {
 
 app.loadQuestion = function () {
     console.log(`Loading question with index: `,  app.questionIndex);
+
+    //Blank out the giphy
+    $('.giphy').attr('src','').attr('alt','');
+
     app.questionsPromise.then( questions => {
         const question = questions[app.questionIndex];
         console.log(`question in load question function: `,  question);
@@ -451,8 +455,19 @@ app.loadQuestion = function () {
         lines.forEach( line => $('.lyrics').append(`<p>${line}</p>`) ) ;
 
         $('.selection').empty();
-        question.choices.forEach(artistChoice =>  $('.selection').append(`<button class="button1">${artistChoice}</button>`)   );
+        question.choices.forEach(artistChoice =>  $('.selection').append(`<button class="answer-button  button1">${artistChoice}</button>`)   );
+        if (app.questionIndex < questions.length) {
+            //increment the question index unless we're on the last question
+            app.questionIndex++;
+            console.log('Incrementing question index: ', app.questionIndex )
+        }
 
+        //Set up the gif with a new gif. We do this while loading question to ensure the gif has time to load before the user clicks on the answer.
+        const rand = app.randomRange(0,5);
+        question.answer.gifs_promise.then(gifs => {
+            const gifUrl = gifs[rand];
+            $('.giphy').attr('src', gifUrl );
+        });
     });
 }
 
@@ -460,17 +475,17 @@ app.handleAnswer = function(e) {
     e.preventDefault();
     $('.gamePage').fadeOut();
     $('.feedback').fadeIn();
+
     app.questionsPromise.then(questions => {
-        const question = questions[app.questionIndex];
+        const question = questions[app.questionIndex-1];
         const correctArtist = question.answer.artist_name;
-        console.log(correctArtist);
-        if ($(e.target).text() === correctArtist) {
-            console.log('correct');
+        console.log("Correct artist: ", correctArtist);
+        console.log("$(e.target).text().trim()", $(e.target).text().trim());
+        if ($(e.target).text().trim() === correctArtist) {
             app.score = app.score + 1;
             $('.feedback h2').text("CORRECT");
             $('.score').text(app.score);
         } else {
-            console.log(`incorrect`);
             $('.feedback h2').text("WRONG");
             $('.feedback .giphy').prev(`<h3>The correct answer is:</h3>`  ) ;
 
@@ -479,23 +494,15 @@ app.handleAnswer = function(e) {
         $('.feedback .trackName').text(`Song: ${question.answer.track_name}`);
         $('.feedback button').remove();
 
-        if (app.questionIndex === questions.length - 1) {
+        //Greater or equal to length because we've already incremented questionIndex. So when on the last question, it should be equal to the length.
+        if (app.questionIndex >= questions.length) {
             //We are on the last question
             $('.feedback .trackName').after(`<button class="getScore button1">Get Score</button>`);
         } else {
-            app.questionIndex++;
             $('.feedback .trackName').after(`<button class="nextQuestion button1">Next Question >></button>`);
         }
 
-        const rand = app.randomRange(0,9);
-        question.answer.gifs_promise.then(gifs => {
-            console.log(`rand inside handle answer: `, rand);
 
-            console.log(`GIFS INSIDE HANDLE ANSWER: `, gifs );
-
-            const gifUrl = gifs[rand];
-            $('.giphy').attr('src', gifUrl );
-        });
     });
 }//ENd of handleAnswer function
 
@@ -507,6 +514,19 @@ app.nextQuestion = function (e) {
 
 }
 
+app.getScore = function (e) {
+    e.preventDefault();
+    $('.feedback').fadeOut();
+    scorePercentage =   Math.floor(app.score /  app.numberOfQuestions * 100);
+    if (scorePercentage > 50) {
+        $('.winnerSection h4').text(`Your got ${scorePercentage}% correct, way to go!`);
+        $('.winnerSection').fadeIn();
+    } else {
+        $('.loserSection h4').text(`You only got ${scorePercentage}% correct`);
+        $('.loserSection').fadeIn();
+    }
+
+}
 
 app.backgroundOnSelect = function (e) {
     const $select = $(e.target);
@@ -540,12 +560,6 @@ $(function(){
     app.tracksPromise = app.musixRequest()
         .then( function (sortedTrackInfo){
           console.log(`sorted track info from musixRequest`,  sortedTrackInfo);
-          let rand =  app.randomRange(0,  sortedTrackInfo['Top 100'].length -1);
-          let randomArtist =  sortedTrackInfo['Top 100'][rand].artist_name;
-          console.log('Random Artist: ', randomArtist);
-          let gifsPromise =  app.giphyRequest(randomArtist) ;
-          gifsPromise.then(res => console.log(`gifs promise: `,  res)  );
-
           return sortedTrackInfo;
     });
             // console.log('Get LYRICS: ',   app.getLyrics(app.tracksPromise, "Hip Hop/Rap" )) ;
@@ -561,9 +575,7 @@ $(function(){
 
         const genreSelected = $('#genre').val();
         if (genreSelected) {
-
-           app.questionsPromise = app.makeQuestions(5, genreSelected);
-           console.log(`questions promise: `, app.questionsPromise);
+           app.questionsPromise = app.makeQuestions(app.numberOfQuestions, genreSelected);
            app.loadQuestion(app.questionIndex);
         }// end of if
         else {
@@ -573,7 +585,7 @@ $(function(){
 
     $('#genre').change(app.backgroundOnSelect);
 
-    $('.selection').on('click', 'button', app.handleAnswer);
+    $('.selection').on('click', '.answer-button', app.handleAnswer);
 
     $('.feedbackContent').on('click', '.nextQuestion', app.nextQuestion)
 
