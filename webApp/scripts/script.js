@@ -444,8 +444,15 @@ app.getGenres = function (tracksData) {
 app.loadQuestion = function () {
     console.log(`Loading question with index: `,  app.questionIndex);
 
-    //Blank out the giphy
+    //Blank out the giphy from feedback section
     $('.giphy').attr('src','').attr('alt','');
+
+    //Remove correct answer h3 from feedback
+    $('.theCorrectAnswerIs').remove();
+
+    //Remove feedback button from feedbacksection
+    $('.feedback button').remove();
+
 
     app.questionsPromise.then( questions => {
         const question = questions[app.questionIndex];
@@ -477,22 +484,26 @@ app.handleAnswer = function(e) {
     $('.feedback').fadeIn();
 
     app.questionsPromise.then(questions => {
-        const question = questions[app.questionIndex-1];
+        console.log("QUESTION PROMISE IN HANDLE ANSWER");
+        const question = questions[app.questionIndex - 1];
         const correctArtist = question.answer.artist_name;
         console.log("Correct artist: ", correctArtist);
         console.log("$(e.target).text().trim()", $(e.target).text().trim());
+
+        $('.artistName').html(`Artist: ${correctArtist}` );
+        $('.trackName').html(`Song: ${question.answer.track_name}`);
+
+
         if ($(e.target).text().trim() === correctArtist) {
             app.score = app.score + 1;
             $('.feedback h2').text("CORRECT");
             $('.score').text(app.score);
         } else {
+            console.log("ELSE STATEMENT TRIGGERED BY WRONG ANSWER");
             $('.feedback h2').text("WRONG");
-            $('.feedback .giphy').prev(`<h3>The correct answer is:</h3>`  ) ;
+            $('.feedbackContent').prepend( `<h3 class=".theCorrectAnswerIs" >The correct answer is:</h3>` ) ;
 
         }
-        $('.feedback .artistName').text(`Artist: ${correctArtist}` );
-        $('.feedback .trackName').text(`Song: ${question.answer.track_name}`);
-        $('.feedback button').remove();
 
         //Greater or equal to length because we've already incremented questionIndex. So when on the last question, it should be equal to the length.
         if (app.questionIndex >= questions.length) {
@@ -588,6 +599,10 @@ $(function(){
     $('.selection').on('click', '.answer-button', app.handleAnswer);
 
     $('.feedbackContent').on('click', '.nextQuestion', app.nextQuestion)
+
+    $('.feedbackContent').on('click', '.getScore', app.getScore);
+
+
 
     $('.resetButton').on('click', function (e) {
         e.preventDefault();
