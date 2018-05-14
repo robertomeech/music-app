@@ -1,7 +1,7 @@
 .winnerSection{
     width: 80%;
     margin: 0 auto;
-    display: flex;
+    // display: flex;
     justify-content: center;
     .win {
         display: flex;
@@ -37,7 +37,7 @@
 .loserSection {
     width: 80%;
     margin: 0 auto;
-    display: flex;
+    // display: flex;
     justify-content: center;
     .lose {
         display: flex;
@@ -64,7 +64,7 @@
         font-family: $accentFont;
         font-size: 3rem;
         border: none;
-    } 
+    }
     }
 }
 

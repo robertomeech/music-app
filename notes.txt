@@ -18,13 +18,6 @@ Strech goal: add local live upcoming  events.
 
 
 
-
-
-
-
-
-
-
 Rotten Tomatoes
 https://www.programmableweb.com/api/rotten-tomatoes
 

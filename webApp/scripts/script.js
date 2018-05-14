@@ -6,11 +6,13 @@ app = {};
 
 //PAGE BUILDING FUNCTIONS
 app.genres = {
-    "Pop": 14,
-    "Hip Hop/Rap": 18,
-    "Alternative": 20,
-    "Country": 6
-  }
+
+    "Pop": 'pop',
+    "Hip Hop/Rap": 'hip-hop' ,
+    "Alternative": 'alternative',
+    "Country": 'country'
+
+}
 
 app.score = 0;
 
@@ -215,13 +217,13 @@ app.giphyRequest = function(artistSearch){  //parameter is relative to the funct
 
     })
     .then(function(result){
-        console.log(`Giphy Result: `, result);
+        // console.log(`Giphy Result: `, result);
         let gifs = [];
 
         for (let i = 0; i < 10; i++) {
            gifs.push ( result.data[i].images.original.url );
         }
-        console.log(`10 gifs: `, gifs);
+        // console.log(`10 gifs: `, gifs);
 
        return gifs;
     })
@@ -338,7 +340,7 @@ app.makeQuestions = function (numberOfQuestions, genre) {
                     info.splice(infoIndex, 1);
                 }
             }
-            // console.log(`questions: `,  questions )
+            console.log(`ALL QUESTIONS: `,  questions )
             return questions;
         });//END OF THEN METHOD ON GETLYRICS
 
@@ -440,26 +442,26 @@ app.getGenres = function (tracksData) {
 /// PAGE LOADING FUNCTIONS
 
 app.loadQuestion = function () {
-
+    console.log(`Loading question with index: `,  app.questionIndex);
     app.questionsPromise.then( questions => {
         const question = questions[app.questionIndex];
         console.log(`question in load question function: `,  question);
         const lines = question.lyrics.split('\n');
-
+        $('.lyrics').empty();
         lines.forEach( line => $('.lyrics').append(`<p>${line}</p>`) ) ;
 
-        question.choices.forEach(artistChoice =>  $('.selection').append(`<button class="answers">${artistChoice}</button>`)   );
-
-        app.questionIndex++;
+        $('.selection').empty();
+        question.choices.forEach(artistChoice =>  $('.selection').append(`<button class="button1">${artistChoice}</button>`)   );
 
     });
 }
 
 app.handleAnswer = function(e) {
     e.preventDefault();
-    console.log(e.target);
+    $('.gamePage').fadeOut();
+    $('.feedback').fadeIn();
     app.questionsPromise.then(questions => {
-        const question = questions[app.questionIndex - 1];
+        const question = questions[app.questionIndex];
         const correctArtist = question.answer.artist_name;
         console.log(correctArtist);
         if ($(e.target).text() === correctArtist) {
@@ -470,21 +472,58 @@ app.handleAnswer = function(e) {
         } else {
             console.log(`incorrect`);
             $('.feedback h2').text("WRONG");
+            $('.feedback .giphy').prev(`<h3>The correct answer is:</h3>`  ) ;
+
         }
-        $('.feedback .artistName').text(correctArtist);
-        $('.feedback .trackName').text(question.answer.track_name);
+        $('.feedback .artistName').text(`Artist: ${correctArtist}` );
+        $('.feedback .trackName').text(`Song: ${question.answer.track_name}`);
+        $('.feedback button').remove();
+
+        if (app.questionIndex === questions.length - 1) {
+            //We are on the last question
+            $('.feedback .trackName').after(`<button class="getScore button1">Get Score</button>`);
+        } else {
+            app.questionIndex++;
+            $('.feedback .trackName').after(`<button class="nextQuestion button1">Next Question >></button>`);
+        }
+
         const rand = app.randomRange(0,9);
-        question.answer.gifs_promise.then(gifs => { 
+        question.answer.gifs_promise.then(gifs => {
             console.log(`rand inside handle answer: `, rand);
-            
+
             console.log(`GIFS INSIDE HANDLE ANSWER: `, gifs );
-            
+
             const gifUrl = gifs[rand];
             $('.giphy').attr('src', gifUrl );
         });
     });
+}//ENd of handleAnswer function
+
+app.nextQuestion = function (e) {
+    e.preventDefault();
+    app.loadQuestion();
+    $('.gamePage').fadeIn();
+    $('.feedback').fadeOut();
+
 }
 
+
+app.backgroundOnSelect = function (e) {
+    const $select = $(e.target);
+    const genre =  $select.val();
+    console.log(genre);
+
+    if (genre === 'Top 100') {
+
+        $('.introPage').removeClass('top100 pop alternative hip-hop country').addClass('top100');
+
+
+    } else {
+        $('.introPage').removeClass('top100 pop alternative hip-hop country').addClass(app.genres[genre]);
+    }
+
+
+}
 
 
 
@@ -493,6 +532,7 @@ app.handleAnswer = function(e) {
 
 //Document Ready Function
 $(function(){
+    $('.introPage').show();
     app.addGenreOptions();
 
 
@@ -514,9 +554,12 @@ $(function(){
     //Form event handler
     $('.game-options').on("submit", function (event) {
         event.preventDefault();
+
+        $('.introPage').fadeOut();
+        $('.gamePage').fadeIn();
+
+
         const genreSelected = $('#genre').val();
-
-
         if (genreSelected) {
 
            app.questionsPromise = app.makeQuestions(5, genreSelected);
@@ -527,8 +570,13 @@ $(function(){
           console.log("Please select a genre");
         }
     });
+
+    $('#genre').change(app.backgroundOnSelect);
+
     $('.selection').on('click', 'button', app.handleAnswer);
-    
+
+    $('.feedbackContent').on('click', '.nextQuestion', app.nextQuestion)
+
     $('.resetButton').on('click', function (e) {
         e.preventDefault();
         // console.log('reset');

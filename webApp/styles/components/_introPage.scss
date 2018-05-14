@@ -1,8 +1,42 @@
 .introPage {
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(././images/denisse-leon-395932-unsplash.jpg);
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(images/daniel-von-appen-285976-unsplash-radio.jpg);
     background-size: cover;
     width: 80%;
     margin: 0 auto;
+    padding: 50px;
+    &.top100 {
+        background:linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(images/joseph-pearson-411277-unsplash-top100.jpg );
+        background-size: cover;
+    }
+    &.pop {
+        background: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),url(images/samuel-zeller-103111-unsplash-pop.jpg );
+        background-size: cover;
+    }
+    &.alternative {
+        background:linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(images/luke-porter-108506-unsplash-alternative.jpg );
+        background-size: cover;
+    }
+    &.hip-hop {
+        background:linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(images/matty-adame-200085-unsplash-hip-hop.jpg );
+        background-size: cover;
+    }
+    &.country {
+        background: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),url(images/thomas-kelley-78865-unsplash-country.jpg );
+        background-size: cover;
+    }
+
+    h2 span {
+        display: block;
+    }
+
+
+}
+
+.text {
+    text-align: center;
+    color: #8884ff;
+    margin: 0;
+    line-height: 1;
 }
 
 .game-options {
@@ -12,21 +46,22 @@
     select {
         width: 200px;
         height: 75px;
-        margin-top: 5%;
+        margin: 10px 0;
         text-transform: capitalize;
-        font-family: $baseFont;
+        font-family: $accentFont;
         letter-spacing: 1.1px;
-        font-size: 3rem;
+        font-size: 1.8rem;
+        text-transform: uppercase;
         font-weight: bold;
         padding: 10px;
-        color: black;
+        color: $primaryColor;
         appearance: none;
         border: none;
         text-align: center;
         transition: all 0.4s ease;
+        text-shadow: 1px 1px rgba(0, 0, 0, 0.315);
          &:hover {
-            background-color: $primaryColor;
-            color: $secondaryColor;
+            background-color: $secondaryColor;
         }
     }
     input {
@@ -39,14 +74,13 @@
         font-weight: bold;
         letter-spacing: 10px;
         padding: 10px;
-        background-color: $secondaryColor;
+        background-color: $primaryColor;
         border: none;
         color: black;
         font-weight: bold;
         transition: all 0.4s ease;
         &:hover {
-            background-color: $primaryColor;
-            color: $secondaryColor;
+            background-color: $secondaryColor;
         }
     }
 }
@@ -55,7 +89,7 @@
     font: $accentFont;
 
 }
- 
+
 
 
 @media(max-width: 900px) {
