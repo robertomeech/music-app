@@ -1,3 +1,15 @@
+main {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+section {
+    display: none;
+    flex-grow: 1;
+    padding-bottom: 50px;
+}
+
 
 
 .score {
@@ -12,3 +24,28 @@
         right: 15px;
         top: 15px;
     }
+
+.button1 {
+    width: 200px;
+    height: 75px;
+    border: none;
+    background: linear-gradient(to right, #4e54c8, #8f94fb);
+    font-size: 2rem;
+    font-family: $accentFont;
+    text-transform: uppercase;
+    color: white;
+    transition: all 0.4s ease;
+
+    &:hover {
+            background: linear-gradient(to right, #fc5c7d, #6a82fb);
+
+    }
+
+    @media(max-width: 1160px) {
+
+
+        margin: 15px;
+        width: 350px;
+    }
+
+}
