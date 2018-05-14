@@ -7,7 +7,6 @@ main {
 section {
     display: none;
     flex-grow: 1;
-    padding-bottom: 50px;
 }
 
 
@@ -35,6 +34,7 @@ section {
     text-transform: uppercase;
     color: white;
     transition: all 0.4s ease;
+    margin-top: 25px;
 
     &:hover {
             background: linear-gradient(to right, #fc5c7d, #6a82fb);
