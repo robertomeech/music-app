@@ -9,6 +9,12 @@ section {
     flex-grow: 1;
 }
 
+
+section {
+    display: none;
+    flex-grow: 1;
+}
+
 .score {
         background: $secondaryColor;
         border: 5px solid black;
